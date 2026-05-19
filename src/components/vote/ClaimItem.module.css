@@ -26,7 +26,60 @@
   background-color: #1a1a1adc;
   padding: 8px 12px;
   border-radius: 4px;
-  overflow: hidden;
+  position: relative;
+}
+
+.pillTooltip {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 12px;
+  color: #e8e8e8;
+  white-space: normal;
+  max-width: 300px;
+  min-width: 220px;
+  z-index: 9999;
+  pointer-events: none;
+  line-height: 1.5;
+}
+
+.pillTooltipBelow {
+  animation: tooltipFadeInDown 0.15s ease forwards;
+}
+
+.pillTooltipAbove {
+  animation: tooltipFadeInUp 0.15s ease forwards;
+}
+
+@keyframes tooltipFadeInDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes tooltipFadeInUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(calc(-100% + 4px)); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(-100%); }
+}
+
+.pillTooltipBelow::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-bottom-color: #444;
+}
+
+.pillTooltipAbove::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #444;
 }
 
 .pillImage {

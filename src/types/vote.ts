@@ -32,6 +32,8 @@ export interface VoteItem extends Claim {
   object_image?: string | null;  // Image URL for the object atom
   subject_term_id?: string | null;
   object_term_id?: string | null;
+  subject_description?: string | null;
+  object_description?: string | null;
 }
 
 // Response structure after a transaction

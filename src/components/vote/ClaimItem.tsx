@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useRef } from "react";
+import ReactDOM from "react-dom";
 import { VoteItem, VoteDirection } from "../../types/vote";
 import { Network } from "../../hooks/useAtomData";
 import { ipfsToHttpUrl } from "../../utils/pinata";
@@ -36,6 +37,7 @@ export const ClaimItem: React.FC<ClaimItemProps> = ({
     object_image,
     subject_term_id,
     object_term_id,
+    object_description,
     units = 0,
     direction = VoteDirection.None,
     term_position_count = 0,
@@ -49,12 +51,14 @@ export const ClaimItem: React.FC<ClaimItemProps> = ({
   const showObjectImage = object_image &&
     getAtomVerificationStatus(object_term_id ?? undefined).status !== 'not-verified';
 
-  // Sélection en cours (non soumise)
+  const objectPillRef = useRef<HTMLDivElement>(null);
+  const [showObjectTooltip, setShowObjectTooltip] = useState(false);
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
+  const [tooltipAbove, setTooltipAbove] = useState(false);
+
   const isSelectedFor = direction === VoteDirection.For && units > 0;
   const isSelectedAgainst = direction === VoteDirection.Against && units > 0;
-  const hasSelection = isSelectedFor || isSelectedAgainst;
 
-  // Position existante sur la blockchain
   const hasForPosition = userHasPosition && userPositionDirection === VoteDirection.For;
   const hasAgainstPosition = userHasPosition && userPositionDirection === VoteDirection.Against;
   const hasAnyPosition = userHasPosition && userPositionDirection !== VoteDirection.None;
@@ -63,7 +67,6 @@ export const ClaimItem: React.FC<ClaimItemProps> = ({
     if (isSelectedFor) {
       onChangeUnits(id, VoteDirection.None, 0);
     } else if (!hasForPosition) {
-      // New vote FOR, or switch from AGAINST to FOR
       onChangeUnits(id, VoteDirection.For, 1);
     }
   };
@@ -72,15 +75,38 @@ export const ClaimItem: React.FC<ClaimItemProps> = ({
     if (isSelectedAgainst) {
       onChangeUnits(id, VoteDirection.None, 0);
     } else if (!hasAgainstPosition) {
-      // New vote AGAINST, or switch from FOR to AGAINST
       onChangeUnits(id, VoteDirection.Against, 1);
     }
   };
 
-  // Up: locked when user already has FOR on-chain, or currently selecting against
-  const upDisabled = hasForPosition || isSelectedAgainst;
-  // Down: locked when user already has AGAINST on-chain, or currently selecting for
-  const downDisabled = hasAgainstPosition || isSelectedFor;
+  const upDisabled = hasForPosition;
+  const downDisabled = hasAgainstPosition;
+
+  const handleObjectMouseEnter = () => {
+    if (!object_description || !objectPillRef.current) return;
+    const rect = objectPillRef.current.getBoundingClientRect();
+    const scrollContainer = objectPillRef.current.closest('[data-scroll-list]');
+    const containerTop = scrollContainer
+      ? scrollContainer.getBoundingClientRect().top
+      : 0;
+    const spaceAbove = rect.top - containerTop;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const above = spaceAbove > 110 && spaceBelow < 110;
+    setTooltipAbove(above);
+    setTooltipStyle({
+      position: 'fixed',
+      left: rect.left + rect.width / 2,
+      ...(above
+        ? { top: rect.top - 6, transform: 'translateX(-50%) translateY(-100%)' }
+        : { top: rect.bottom + 6, transform: 'translateX(-50%)' }
+      ),
+    });
+    setShowObjectTooltip(true);
+  };
+
+  const handleObjectMouseLeave = () => {
+    setShowObjectTooltip(false);
+  };
 
   return (
     <div
@@ -88,10 +114,7 @@ export const ClaimItem: React.FC<ClaimItemProps> = ({
     >
       {/* Triple details */}
       <div className={styles.tripleWrapper}>
-        <div
-          title={subject}
-          className={styles.pill}
-        >
+        <div className={styles.pill}>
           {showSubjectImage && (
             <img
               src={ipfsToHttpUrl(subject_image!)}
@@ -99,9 +122,7 @@ export const ClaimItem: React.FC<ClaimItemProps> = ({
               className={styles.pillImage}
             />
           )}
-          <span className={styles.pillLabel}>
-            {subject}
-          </span>
+          <span className={styles.pillLabel}>{subject}</span>
         </div>
         <span
           title={predicate}
@@ -110,8 +131,10 @@ export const ClaimItem: React.FC<ClaimItemProps> = ({
           {predicate}
         </span>
         <div
-          title={object}
+          ref={objectPillRef}
           className={styles.pill}
+          onMouseEnter={handleObjectMouseEnter}
+          onMouseLeave={handleObjectMouseLeave}
         >
           {showObjectImage && (
             <img
@@ -120,9 +143,7 @@ export const ClaimItem: React.FC<ClaimItemProps> = ({
               className={styles.pillImage}
             />
           )}
-          <span className={styles.pillLabel}>
-            {object}
-          </span>
+          <span className={styles.pillLabel}>{object}</span>
         </div>
       </div>
 
@@ -172,6 +193,17 @@ export const ClaimItem: React.FC<ClaimItemProps> = ({
           )}
         </div>
       </div>
+
+      {/* Portal tooltip */}
+      {showObjectTooltip && object_description && ReactDOM.createPortal(
+        <div
+          className={`${styles.pillTooltip} ${tooltipAbove ? styles.pillTooltipAbove : styles.pillTooltipBelow}`}
+          style={tooltipStyle}
+        >
+          {object_description}
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

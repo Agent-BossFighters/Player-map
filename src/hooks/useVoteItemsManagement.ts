@@ -292,6 +292,11 @@ export const useVoteItemsManagement = ({
                   term_id
                   label
                   image
+                  value {
+                    thing {
+                      description
+                    }
+                  }
                 }
               }
             `,
@@ -450,6 +455,8 @@ export const useVoteItemsManagement = ({
           object_image: (details.object as any)?.image || null,
           subject_term_id: (details.subject as any)?.term_id || null,
           object_term_id: (details.object as any)?.term_id || null,
+          subject_description: (details.subject as any)?.value?.thing?.description || null,
+          object_description: (details.object as any)?.value?.thing?.description || null,
           units: 0,
           direction: VoteDirection.None,
           term_id: details.term_id,
