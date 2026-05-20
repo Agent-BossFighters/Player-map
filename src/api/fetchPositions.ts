@@ -31,7 +31,7 @@ export const fetchPositions = async (
           
           // Une seule requête avec toutes les relations imbriquées
           const query = `query GetActivePositions($accountId: String!, $limit: Int!, $offset: Int!) {
-            positions(where: { account_id: { _ilike: $accountId }, shares: { _gt: 0 } }, limit: $limit, offset: $offset) {
+            positions(where: { account_id: { _eq: $accountId }, shares: { _gt: 0 } }, limit: $limit, offset: $offset) {
               id
               shares
               curve_id

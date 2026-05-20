@@ -116,20 +116,41 @@ export const useFollowPlayer = ({
 
   useEffect(() => { checkFollowState(); }, [checkFollowState]);
 
+  // Retry refetching follow count until it reflects the expected change or max retries reached
+  const refetchFollowCountUntilChanged = useCallback((expectedDelta: 1 | -1) => {
+    const delays = [2000, 3000, 5000, 8000];
+    const prevEntries = queryClient.getQueriesData<any>({ queryKey: ['otherPlayerFollowCounts', otherAccountAtomId] });
+    const prevCount: number = prevEntries[0]?.[1]?.followersCount ?? -1;
+
+    const attempt = async (index: number) => {
+      if (index >= delays.length) return;
+      await new Promise(r => setTimeout(r, delays[index]));
+      await queryClient.refetchQueries({ queryKey: ['otherPlayerFollowCounts', otherAccountAtomId] });
+      const newEntries = queryClient.getQueriesData<any>({ queryKey: ['otherPlayerFollowCounts', otherAccountAtomId] });
+      const newCount: number = newEntries[0]?.[1]?.followersCount ?? prevCount;
+      const changed = expectedDelta > 0 ? newCount > prevCount : newCount < prevCount;
+      if (!changed) attempt(index + 1);
+    };
+    attempt(0);
+  }, [queryClient, otherAccountAtomId]);
+
   const follow = async () => {
     if (!otherAccountAtomId || !walletAddress || !walletConnected) return;
+
+    // Optimistic: button state only
+    const prevFollowState = followState;
+    setFollowState('following');
+
     setTxLoading(true);
     setError(null);
     try {
       if (!tripleId) {
-        // Triple (I, follow, otherAccount) doesn't exist yet — create it (requires ~0.11 TRUST)
         await batchCreateTriple([{
           subjectId: BigInt(ATOMS.I),
           predicateId: BigInt(PREDICATES.FOLLOWS),
           objectId: BigInt(otherAccountAtomId),
         }]);
       } else {
-        // Triple exists — deposit into its vault to signal follow
         const depositAmount = BigInt(import.meta.env.VITE_VALUE_PER_TRIPLE || '10000000000000000');
         await walletConnected.writeContract({
           address: ATOM_CONTRACT_ADDRESS,
@@ -146,12 +167,13 @@ export const useFollowPlayer = ({
           gas: 500000n,
         });
       }
+      setUserShares(1n);
       apiCache.clear();
       await queryClient.invalidateQueries({ queryKey: ['positions'] });
-      await queryClient.invalidateQueries({ queryKey: ['otherPlayerFollowCounts'] });
       await queryClient.invalidateQueries({ queryKey: ['followsAndFollowers'] });
-      await checkFollowState();
+      refetchFollowCountUntilChanged(1);
     } catch (err: any) {
+      setFollowState(prevFollowState);
       console.error('[useFollowPlayer] follow error:', err);
       const msg = (err?.message ?? err?.shortMessage ?? String(err)).toLowerCase();
       const isRejected = err?.name === 'UserRejectedRequestError' || msg.includes('user rejected');
@@ -165,7 +187,26 @@ export const useFollowPlayer = ({
   };
 
   const unfollow = async () => {
-    if (!tripleId || !walletAddress || !walletConnected || userShares === 0n) return;
+    if (!tripleId || !walletAddress || !walletConnected || followState !== 'following') return;
+
+    // Always read actual shares from chain — userShares may be stale or placeholder
+    let sharesToRedeem = userShares;
+    if (publicClient) {
+      try {
+        sharesToRedeem = await publicClient.readContract({
+          address: ATOM_CONTRACT_ADDRESS as `0x${string}`,
+          abi: atomABI,
+          functionName: 'getShares',
+          args: [walletAddress as `0x${string}`, tripleId as `0x${string}`, 1n],
+        }) as bigint;
+      } catch { /* fallback to stored userShares */ }
+    }
+    if (sharesToRedeem === 0n) return;
+
+    // Optimistic: button state only
+    const prevFollowState = followState;
+    setFollowState('not-following');
+
     setTxLoading(true);
     setError(null);
     try {
@@ -173,15 +214,16 @@ export const useFollowPlayer = ({
         receiver: walletAddress as `0x${string}`,
         termIds: [tripleId as `0x${string}`],
         curveIds: [1n],
-        shares: [userShares],
+        shares: [sharesToRedeem],
         minAssets: [0n],
       });
+      setUserShares(0n);
       apiCache.clear();
       await queryClient.invalidateQueries({ queryKey: ['positions'] });
-      await queryClient.invalidateQueries({ queryKey: ['otherPlayerFollowCounts'] });
       await queryClient.invalidateQueries({ queryKey: ['followsAndFollowers'] });
-      await checkFollowState();
+      refetchFollowCountUntilChanged(-1);
     } catch (err: any) {
+      setFollowState(prevFollowState);
       console.error('[useFollowPlayer] unfollow error:', err);
       const msg = (err?.message ?? err?.shortMessage ?? String(err)).toLowerCase();
       const isRejected = err?.name === 'UserRejectedRequestError' || msg.includes('user rejected');

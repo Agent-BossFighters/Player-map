@@ -147,6 +147,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
   console.log('[DIAG] canAccessMap:', canAccessMap);
   console.log('[DIAG] rightPanelMode:', rightPanelMode);
   console.log('[DIAG] activeGame:', activeGame?.atomId, activeGame?.label);
+  console.log('[DIAG] positionsLoading:', positionsLoading, '| total positions:', activePositions.length);
   console.log('[DIAG] activePositions (IS_PLAYER_OF):', (activePositions as any[]).filter((p: any) =>
     p.term?.triple?.predicate_id === PREDICATES.IS_PLAYER_OF
   ).map((p: any) => ({
