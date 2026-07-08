@@ -108,7 +108,9 @@ const PlayerMapGraph: React.FC<PlayerMapGraphProps> = ({
         <div className={styles.speakUpOverlay}>
           <button
             className={`${styles.speakUpBtn} ${isSpeakUpActive ? styles.speakUpBtnActive : ''}`}
-            onClick={onSpeakUpClick}
+            onClick={isSpeakUpActive ? undefined : onSpeakUpClick}
+            disabled={isSpeakUpActive}
+            style={isSpeakUpActive ? { opacity: 0.5, cursor: 'default' } : undefined}
             aria-label="Speak Up"
           >
             <img src={Atom} alt="" className={styles.speakUpIcon} />

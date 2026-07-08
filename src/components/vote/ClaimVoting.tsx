@@ -142,7 +142,7 @@ export const ClaimVoting: React.FC<ClaimVotingProps> = ({
       </div>
       <br />
       {/* Liste scrollable — prend tout l'espace disponible */}
-      <div className={styles.scrollList}>
+      <div className={styles.scrollList} data-scroll-list>
         <ClaimList
           isLoading={isLoading || positionsLoading}
           voteItems={voteItems}
