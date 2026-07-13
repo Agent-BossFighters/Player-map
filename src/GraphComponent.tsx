@@ -15,6 +15,7 @@ import PlayerMapHome from "./PlayerMapHome";
 import PlayerMapGraph from "./PlayerMapGraph";
 import { ConnectWalletModal } from "./components/modals";
 import TopNavBar, { RightPanelMode, GraphControls } from "./components/TopNavBar";
+import ArchetypeQuest from "./quests/archetype/ArchetypeQuest";
 import RightPanel from "./components/RightPanel";
 import { PlayerMapQueryClientProvider, useQueryClientContext } from "./contexts/QueryClientContext";
 import { useGameContext } from "./contexts/GameContext";
@@ -81,6 +82,9 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
   const initialPanelMode: RightPanelMode =
     persistedMode === 'profile' || persistedMode === 'speakup' ? persistedMode : 'speakup';
   const [rightPanelMode, setRightPanelMode] = useState<RightPanelMode>(initialPanelMode);
+
+  // ── Quête préférences joueur ──────────────────────────────────────────────────
+  const [archetypeQuestOpen, setArchetypeQuestOpen] = useState(false);
 
   // ── Nœud sélectionné ─────────────────────────────────────────────────────────
   const [selectedNode, setSelectedNode] = useState<any>(null);
@@ -293,6 +297,14 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
       {/* Modal connexion wallet */}
       <ConnectWalletModal isOpen={!isWalletReady} onConnectWallet={handleConnectWallet} />
 
+      {/* Quête préférences joueur (archétype) */}
+      <ArchetypeQuest
+        isOpen={archetypeQuestOpen}
+        walletConnected={walletConnected}
+        walletAddress={walletAddress}
+        onClose={() => setArchetypeQuestOpen(false)}
+      />
+
       {/* Home / inscription — wallet non connecté, pas encore de player, ou profil incomplet */}
       {(!isWalletReady || (isWalletReady && !canAccessMap)) && (
         <div className={!isWalletReady ? styles.homeBlurred : styles.homeVisible}>
@@ -319,6 +331,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
             rightPanelMode={rightPanelMode}
             onPanelModeChange={handlePanelModeChange}
             myAtomDetails={myAtomDetails}
+            onOpenArchetype={() => setArchetypeQuestOpen(true)}
           />
 
           {/* Corps : graphe (gauche) + panneau droit */}

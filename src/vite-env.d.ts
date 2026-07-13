@@ -16,6 +16,12 @@ interface ImportMetaEnv {
   readonly VITE_VALUE_PER_ATOM: string;
   readonly VITE_VALUE_PER_TRIPLE: string;
   readonly VITE_ATOM_CONTRACT_CHAIN_ID: string;
+
+  // Quête "Préférences joueur" — worker player-facing pas encore en place,
+  // mode mock activable en attendant (voir quests/archetype/hooks/archetypeApi.ts)
+  readonly VITE_WORKER_URL?: string;
+  readonly VITE_USE_MOCK_PREFERENCES_API?: string;
+  readonly VITE_MOCK_PREFS_FORCE_COMPLETED?: string;
 }
 
 interface ImportMeta {

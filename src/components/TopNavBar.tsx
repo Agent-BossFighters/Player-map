@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaUser, FaArrowLeft, FaArrowRight, FaProjectDiagram } from "react-icons/fa";
+import { FaUser, FaArrowLeft, FaArrowRight, FaProjectDiagram, FaSlidersH } from "react-icons/fa";
 import { SmartSearchInterface } from "playermap_graph";
 import { useGameContext } from "../contexts/GameContext";
 import { ipfsToHttpUrl } from "../utils/pinata";
@@ -43,6 +43,8 @@ interface TopNavBarProps {
   onPanelModeChange: (mode: RightPanelMode) => void;
   /** Logged-in user atom details (for avatar + name) */
   myAtomDetails?: any;
+  /** Opens the "Préférences" quest modal */
+  onOpenArchetype?: () => void;
 }
 
 // ─── Composant ─────────────────────────────────────────────────────────────────
@@ -53,6 +55,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
   rightPanelMode,
   onPanelModeChange,
   myAtomDetails,
+  onOpenArchetype,
 }) => {
   // Game context
   const { games, activeGame, setActiveGameId } = useGameContext();
@@ -188,6 +191,17 @@ const TopNavBar: React.FC<TopNavBarProps> = ({
           )}
         </div>
       </div>
+
+      {/* ── Préférences ──────────────────────────────── */}
+      <button
+        className={styles.iconBtn}
+        onClick={onOpenArchetype}
+        disabled={!onOpenArchetype}
+        aria-label="Préférences"
+        title="Préférences"
+      >
+        <FaSlidersH size={30} />
+      </button>
 
       {/* ── Spacer ──────────────────────────────────── */}
       <div className={styles.spacer} />
