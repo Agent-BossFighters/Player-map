@@ -15,7 +15,7 @@ import PlayerMapHome from "./PlayerMapHome";
 import PlayerMapGraph from "./PlayerMapGraph";
 import { ConnectWalletModal } from "./components/modals";
 import TopNavBar, { RightPanelMode, GraphControls } from "./components/TopNavBar";
-import ArchetypeQuest from "./quests/archetype/ArchetypeQuest";
+import ArchetypeMission from "./missions/global/archetype/ArchetypeMission";
 import RightPanel from "./components/RightPanel";
 import { PlayerMapQueryClientProvider, useQueryClientContext } from "./contexts/QueryClientContext";
 import { useGameContext } from "./contexts/GameContext";
@@ -297,8 +297,8 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
       {/* Modal connexion wallet */}
       <ConnectWalletModal isOpen={!isWalletReady} onConnectWallet={handleConnectWallet} />
 
-      {/* Quête préférences joueur (archétype) */}
-      <ArchetypeQuest
+      {/* Mission archétype (global) */}
+      <ArchetypeMission
         isOpen={archetypeQuestOpen}
         walletConnected={walletConnected}
         walletAddress={walletAddress}

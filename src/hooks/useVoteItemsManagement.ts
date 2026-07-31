@@ -432,18 +432,6 @@ export const useVoteItemsManagement = ({
                                      positionsToUse[String(id)] || 
                                      VoteDirection.None;
 
-        // Debug pour tous les triples avec positions
-        if (userPositionDirection !== VoteDirection.None) {
-          console.log(`[loadTripleDetails] Triple ${normalizedId} a une position:`, userPositionDirection);
-        }
-        
-        // Debug pour voir tous les IDs disponibles dans positionsToUse
-        if (normalizedId === "0x27191de92fe0308355319ec8f2359e5ce85123bd243bf7ffa6eb8028347b3eab") {
-          console.log(`[loadTripleDetails] Triple recherché: ${normalizedId}`);
-          console.log(`[loadTripleDetails] positionsToUse keys:`, Object.keys(positionsToUse));
-          console.log(`[loadTripleDetails] Trouvé dans positionsToUse:`, positionsToUse[normalizedId]);
-        }
-
         const sharesInfo = sharesToUse[normalizedId] || sharesToUse[String(id)];
 
         return {

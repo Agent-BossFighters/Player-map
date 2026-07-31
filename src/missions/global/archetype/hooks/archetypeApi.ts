@@ -37,7 +37,7 @@ function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const isMockEnabled = (): boolean => import.meta.env.VITE_USE_MOCK_PREFERENCES_API === 'false';
+const isMockEnabled = (): boolean => import.meta.env.VITE_USE_MOCK_PREFERENCES_API === 'true';
 const isForcedCompleted = (): boolean => import.meta.env.VITE_MOCK_PREFS_FORCE_COMPLETED === 'true';
 
 function workerUrl(path: string): string {

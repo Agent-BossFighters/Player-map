@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { parseEther } from 'viem';
-import { ATOM_CONTRACT_ADDRESS, atomABI } from '../../../abi';
-import { Network, API_URLS } from '../../../hooks/useAtomData';
+import { ATOM_CONTRACT_ADDRESS, atomABI } from '../../../../abi';
+import { Network, API_URLS } from '../../../../hooks/useAtomData';
 import { ARCHETYPE_STEPS } from '../archetype-questionnaire.config';
 import { AnswerValue, MultiRatingAnswer, ArchetypeAnswers } from './useArchetypeDraft';
 

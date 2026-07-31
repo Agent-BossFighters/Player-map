@@ -78,6 +78,15 @@ export { default as PlayerMap } from './PlayerMap';
 export { GameContextProvider, useGameContext } from './contexts/GameContext';
 export type { ResolvedGame, ResolvedClaim, ResolvedGuild, GameContextValue } from './contexts/GameContext';
 export type { GameConfig, ClaimConfig, GuildConfig, PlayerMapProps } from './types/PlayerMapConfig';
+export type {
+  MissionType,
+  MissionStatus,
+  BaseMission,
+  DailyMission,
+  GlobalMission,
+  SocialMission,
+  Mission,
+} from './types/Missions';
 
 // Exporter un composant par défaut
 export default PlayerMapHome;

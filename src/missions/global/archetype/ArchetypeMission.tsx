@@ -9,9 +9,9 @@ import { useArchetypeDraft, AnswerValue, MultiRatingAnswer } from './hooks/useAr
 import { useArchetypeSubmission } from './hooks/useArchetypeSubmission';
 import { usePlayerArchetype } from './hooks/usePlayerArchetype';
 import { ArchetypeQuestion } from './archetype-questionnaire.config';
-import styles from './ArchetypeQuest.module.css';
+import styles from './ArchetypeMission.module.css';
 
-interface ArchetypeQuestProps {
+interface ArchetypeMissionProps {
   isOpen: boolean;
   walletConnected?: any;
   walletAddress?: string;
@@ -20,7 +20,7 @@ interface ArchetypeQuestProps {
 
 type FlowPhase = 'steps' | 'submitting' | 'reveal';
 
-const ArchetypeQuest: React.FC<ArchetypeQuestProps> = ({
+const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
   isOpen,
   walletConnected,
   walletAddress,
@@ -236,4 +236,4 @@ const ArchetypeQuest: React.FC<ArchetypeQuestProps> = ({
   );
 };
 
-export default ArchetypeQuest;
+export default ArchetypeMission;

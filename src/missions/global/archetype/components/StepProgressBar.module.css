@@ -1,6 +1,6 @@
 /* Duplicated from PlayerCreationProgress.module.css (.progressBar / .progressSteps /
    .stepCircle*) — see TODO in StepProgressBar.tsx for future extraction. */
-@import "../../../styles/variables.css";
+@import "../../../../styles/variables.css";
 
 .progressBar {
   margin-bottom: 20px;
