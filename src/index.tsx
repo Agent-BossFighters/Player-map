@@ -75,6 +75,7 @@ export type { PlayerAlias, AliasCreationStep, RegistrationPhase, IdentityCreatio
 
 // New public API — PlayerMap component + GameContext
 export { default as PlayerMap } from './PlayerMap';
+export { postSession } from './api/sessionApi';
 export { GameContextProvider, useGameContext } from './contexts/GameContext';
 export type { ResolvedGame, ResolvedClaim, ResolvedGuild, GameContextValue } from './contexts/GameContext';
 export type { GameConfig, ClaimConfig, GuildConfig, PlayerMapProps } from './types/PlayerMapConfig';

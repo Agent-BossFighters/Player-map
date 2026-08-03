@@ -1,6 +1,8 @@
 // Contrat de réponse stable, respecté à l'identique en mock et en fetch réel —
 // zéro refacto des hooks/consommateurs quand le worker sera branché.
 
+import { workerUrl } from '../../../../lib/workerClient';
+
 export interface ArchetypeCompletionResponse {
   completed: boolean;
   votedCount: number;
@@ -39,11 +41,6 @@ function delay(ms: number): Promise<void> {
 
 const isMockEnabled = (): boolean => import.meta.env.VITE_USE_MOCK_PREFERENCES_API === 'true';
 const isForcedCompleted = (): boolean => import.meta.env.VITE_MOCK_PREFS_FORCE_COMPLETED === 'true';
-
-function workerUrl(path: string): string {
-  const base = import.meta.env.VITE_WORKER_URL ?? '';
-  return `${base}${path}`;
-}
 
 export async function fetchArchetypeCompletion(address: string): Promise<ArchetypeCompletionResponse> {
   if (isMockEnabled()) {
