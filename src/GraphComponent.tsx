@@ -17,6 +17,7 @@ import { ConnectWalletModal } from "./components/modals";
 import TopNavBar, { RightPanelMode, GraphControls } from "./components/TopNavBar";
 import ArchetypeMission from "./missions/global/archetype/ArchetypeMission";
 import RightPanel from "./components/RightPanel";
+import MissionsSimple from "./components/MissionsSimple";
 import { PlayerMapQueryClientProvider, useQueryClientContext } from "./contexts/QueryClientContext";
 import { useGameContext } from "./contexts/GameContext";
 import { PREDICATES } from "./utils/constants";
@@ -35,6 +36,10 @@ interface GraphComponentProps {
   onCreatePlayer?: () => void;
   onConnectWallet?: () => void;
   initialProfile?: string;
+  /** Host-supplied token getter (e.g. Privy's getAccessToken) — used by the
+   * missions panel to authenticate claim requests. Omit if the host has no
+   * auth; claiming is simply unavailable in that case. */
+  getAccessToken?: () => Promise<string | null>;
 }
 
 const GraphComponentInner: React.FC<GraphComponentProps> = ({
@@ -45,6 +50,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
   onClose,
   onCreatePlayer,
   onConnectWallet,
+  getAccessToken,
 }) => {
   // ── Init ──────────────────────────────────────────────────────────────────────
   useEffect(() => { initGraphql(); }, []);
@@ -334,8 +340,11 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
             onOpenArchetype={() => setArchetypeQuestOpen(true)}
           />
 
-          {/* Corps : graphe (gauche) + panneau droit */}
+          {/* Corps : missions (gauche) + graphe + panneau droit */}
           <div className={styles.body}>
+            {/* Panneau missions — retractable, largeur variable */}
+            <MissionsSimple walletAddress={walletAddress} getAccessToken={getAccessToken} />
+
             {/* Graphe — prend tout l'espace restant */}
             <div className={styles.graphPane}>
               <PlayerMapGraph
