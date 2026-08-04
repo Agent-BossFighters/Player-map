@@ -12,6 +12,7 @@ const PANEL_STORAGE_KEY = 'playermap_missionsPanelOpen';
 interface MissionsSimpleProps {
   walletAddress?: string;
   getAccessToken?: () => Promise<string | null>;
+  onOpenArchetype?: () => void;
 }
 
 interface MissionBlockProps {
@@ -24,6 +25,7 @@ interface MissionBlockProps {
   errorMissionId?: string;
   errorMessage?: string;
   errorIsRateLimit?: boolean;
+  onOpenArchetype?: () => void;
 }
 
 const MissionBlock: React.FC<MissionBlockProps> = ({
@@ -36,6 +38,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
   errorMissionId,
   errorMessage,
   errorIsRateLimit,
+  onOpenArchetype,
 }) => {
   const [expanded, setExpanded] = useState(true);
 
@@ -70,6 +73,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
                   mission={mission}
                   status={mission.status}
                   onClaim={() => onClaim(mission)}
+                  onOpenArchetype={onOpenArchetype}
                 />
                 {errorMissionId === mission.id && (
                   <p className={errorIsRateLimit ? styles.claimRateLimit : styles.claimError}>
@@ -86,7 +90,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
   );
 };
 
-const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAccessToken }) => {
+const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAccessToken, onOpenArchetype }) => {
   const [open, setOpen] = useState<boolean>(() => {
     const stored = localStorage.getItem(PANEL_STORAGE_KEY);
     return stored === null ? true : stored === 'true';
@@ -164,6 +168,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorMissionId={errorMissionId}
                   errorMessage={errorMessage}
                   errorIsRateLimit={errorIsRateLimit}
+                  onOpenArchetype={onOpenArchetype}
                 />
                 <MissionBlock
                   title="Global"
@@ -175,6 +180,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorMissionId={errorMissionId}
                   errorMessage={errorMessage}
                   errorIsRateLimit={errorIsRateLimit}
+                  onOpenArchetype={onOpenArchetype}
                 />
                 <MissionBlock
                   title="Social"
@@ -186,6 +192,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorMissionId={errorMissionId}
                   errorMessage={errorMessage}
                   errorIsRateLimit={errorIsRateLimit}
+                  onOpenArchetype={onOpenArchetype}
                 />
               </>
             )}

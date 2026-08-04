@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import StepProgressBar from './components/StepProgressBar';
 import IntensitySelector from './components/IntensitySelector';
 import MultiRatingSelector from './components/MultiRatingSelector';
@@ -18,7 +18,25 @@ interface ArchetypeMissionProps {
   onClose: () => void;
 }
 
-type FlowPhase = 'steps' | 'submitting' | 'reveal';
+type FlowPhase = 'intro' | 'steps' | 'submitting' | 'reveal';
+
+const introSeenKey = (address: string): string => `playermap:archetype-intro-seen:${address}`;
+
+function hasSeenIntro(address: string): boolean {
+  try {
+    return localStorage.getItem(introSeenKey(address)) !== null;
+  } catch {
+    return true; // localStorage unavailable — don't block the flow on the intro
+  }
+}
+
+function markIntroSeen(address: string): void {
+  try {
+    localStorage.setItem(introSeenKey(address), 'true');
+  } catch {
+    // best-effort — a failed write just means the intro may reappear once
+  }
+}
 
 const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
   isOpen,
@@ -27,14 +45,34 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
   onClose,
 }) => {
   const { completion, isLoading: completionLoading } = useArchetypeCompletion(walletAddress);
+
+  const [phase, setPhase] = useState<FlowPhase>('steps');
+
+  // One-shot: decide intro-vs-steps the first time the modal is actually
+  // open with a known walletAddress (not at raw component mount — this
+  // component stays mounted with isOpen=false before wallet connects, and
+  // waiting avoids deciding on a still-empty address). Read/mark "seen"
+  // here, before useArchetypeDraft mounts below — that hook writes an empty
+  // draft to localStorage on its own first effect, which would make a
+  // later "does a draft exist" check useless as a first-visit signal.
+  // Runs only once per mount, so reopening later (e.g. mid-'reveal') never
+  // resets phase back to 'intro'/'steps'.
+  const introDecidedRef = useRef(false);
+  useEffect(() => {
+    if (introDecidedRef.current || !isOpen || !walletAddress) return;
+    introDecidedRef.current = true;
+    if (!hasSeenIntro(walletAddress)) {
+      markIntroSeen(walletAddress);
+      setPhase('intro');
+    }
+  }, [isOpen, walletAddress]);
+
   const draft = useArchetypeDraft(walletAddress);
   const { submit, isSubmitting, error: submitError } = useArchetypeSubmission({
     walletConnected,
     walletAddress,
   });
   const { archetype, refetch: refetchArchetype } = usePlayerArchetype(walletAddress);
-
-  const [phase, setPhase] = useState<FlowPhase>('steps');
 
   const steps = draft.steps;
   const currentStep = steps[draft.currentStepIndex];
@@ -77,6 +115,29 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
           ×
         </button>
         <p className={styles.loadingText}>Loading...</p>
+      </div>
+    );
+  }
+
+  if (phase === 'intro') {
+    return (
+      <div className={styles.overlay}>
+        <div className={styles.stepContent}>
+          <p className={styles.questionText}>
+            Before you dive into the adventure, we've got one question for you: what kind of
+            player are you, really? This quick questionnaire helps us understand your style —
+            collector, competitor, or just here to unwind. Takes 2 minutes, and it kicks off your
+            player profile on Player Map.
+          </p>
+        </div>
+        <div className={styles.navRow}>
+          <button type="button" className={styles.prevBtn} onClick={onClose}>
+            Later
+          </button>
+          <button type="button" className={styles.nextBtn} onClick={() => setPhase('steps')}>
+            Start
+          </button>
+        </div>
       </div>
     );
   }

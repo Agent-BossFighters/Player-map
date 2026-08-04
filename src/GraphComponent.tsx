@@ -40,6 +40,10 @@ interface GraphComponentProps {
    * missions panel to authenticate claim requests. Omit if the host has no
    * auth; claiming is simply unavailable in that case. */
   getAccessToken?: () => Promise<string | null>;
+  /** True once, right after the host's POST /session call resolves with
+   * isNewPlayer: true — auto-opens the archetype questionnaire for a
+   * genuinely first-ever visit. Omit or leave false/undefined otherwise. */
+  isNewPlayer?: boolean;
 }
 
 const GraphComponentInner: React.FC<GraphComponentProps> = ({
@@ -51,6 +55,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
   onCreatePlayer,
   onConnectWallet,
   getAccessToken,
+  isNewPlayer,
 }) => {
   // ── Init ──────────────────────────────────────────────────────────────────────
   useEffect(() => { initGraphql(); }, []);
@@ -91,6 +96,15 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
 
   // ── Quête préférences joueur ──────────────────────────────────────────────────
   const [archetypeQuestOpen, setArchetypeQuestOpen] = useState(false);
+
+  // Auto-open once for a genuinely first-ever visit (isNewPlayer from POST
+  // /session), same one-shot ref-guard pattern as PlayerMapView's hasFiredSession.
+  const hasAutoOpenedArchetype = useRef(false);
+  useEffect(() => {
+    if (!isNewPlayer || hasAutoOpenedArchetype.current) return;
+    hasAutoOpenedArchetype.current = true;
+    setArchetypeQuestOpen(true);
+  }, [isNewPlayer]);
 
   // ── Nœud sélectionné ─────────────────────────────────────────────────────────
   const [selectedNode, setSelectedNode] = useState<any>(null);
@@ -337,13 +351,16 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
             rightPanelMode={rightPanelMode}
             onPanelModeChange={handlePanelModeChange}
             myAtomDetails={myAtomDetails}
-            onOpenArchetype={() => setArchetypeQuestOpen(true)}
           />
 
           {/* Corps : missions (gauche) + graphe + panneau droit */}
           <div className={styles.body}>
             {/* Panneau missions — retractable, largeur variable */}
-            <MissionsSimple walletAddress={walletAddress} getAccessToken={getAccessToken} />
+            <MissionsSimple
+              walletAddress={walletAddress}
+              getAccessToken={getAccessToken}
+              onOpenArchetype={() => setArchetypeQuestOpen(true)}
+            />
 
             {/* Graphe — prend tout l'espace restant */}
             <div className={styles.graphPane}>

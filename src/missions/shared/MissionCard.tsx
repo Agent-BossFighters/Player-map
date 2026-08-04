@@ -10,6 +10,10 @@ interface MissionCardProps {
   status: MissionStatus;
   onClaim: () => void;
   children?: React.ReactNode;
+  /** Opens the archetype questionnaire modal. Only ever invoked for the
+   * archetype mission card while it's in_progress — see the onClick guard
+   * below. Other mission cards ignore this prop entirely. */
+  onOpenArchetype?: () => void;
 }
 
 function missionHeader(mission: Mission): string {
@@ -23,30 +27,38 @@ function missionHeader(mission: Mission): string {
   }
 }
 
-const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, children }) => (
-  <div className={styles.card}>
-    <div className={styles.header}>
-      <span className={styles.title}>{missionHeader(mission)}</span>
-      <RewardBadge xp={mission.reward.xp} />
-    </div>
+const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, children, onOpenArchetype }) => {
+  const isArchetypeInProgress = mission.id === 'archetype' && status === 'in_progress';
 
-    <ProgressBar
-      current={mission.progress.current}
-      target={mission.progress.target}
-      colorVariant={mission.type}
-    />
+  return (
+    <div
+      className={styles.card}
+      onClick={isArchetypeInProgress ? onOpenArchetype : undefined}
+      style={isArchetypeInProgress ? { cursor: 'pointer' } : undefined}
+    >
+      <div className={styles.header}>
+        <span className={styles.title}>{missionHeader(mission)}</span>
+        <RewardBadge xp={mission.reward.xp} />
+      </div>
 
-    {children && <div className={styles.slot}>{children}</div>}
-
-    <div className={styles.footer}>
-      <ClaimButton
-        status={status}
-        missionType={mission.type}
-        onClaim={onClaim}
-        link={mission.type === 'social' ? mission.link : undefined}
+      <ProgressBar
+        current={mission.progress.current}
+        target={mission.progress.target}
+        colorVariant={mission.type}
       />
+
+      {children && <div className={styles.slot}>{children}</div>}
+
+      <div className={styles.footer}>
+        <ClaimButton
+          status={status}
+          missionType={mission.type}
+          onClaim={onClaim}
+          link={mission.type === 'social' ? mission.link : undefined}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default MissionCard;
