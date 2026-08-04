@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaLock } from 'react-icons/fa';
+import { FaLock, FaCheck } from 'react-icons/fa';
 import type { Mission, MissionStatus } from '../../types/Missions';
 import styles from './ClaimButton.module.css';
 
@@ -18,6 +18,7 @@ const ClaimButton: React.FC<ClaimButtonProps> = ({ status, missionType, onClaim,
   if (status === 'claimed') {
     return (
       <button type="button" className={styles.claimed} disabled>
+        <FaCheck className={styles.checkIcon} />
         CLAIMED
       </button>
     );

@@ -13,13 +13,13 @@ const ArchetypeBadge: React.FC<ArchetypeBadgeProps> = ({ address, onClose }) => 
 
   return (
     <div className={styles.wrapper}>
-      {isLoading && <p className={styles.status}>Chargement de ton archétype...</p>}
+      {isLoading && <p className={styles.status}>Loading your archetype...</p>}
       {!isLoading && (error || !archetype) && (
-        <p className={styles.status}>Impossible de charger ton archétype pour le moment.</p>
+        <p className={styles.status}>Failed to load your archetype right now.</p>
       )}
       {!isLoading && !error && archetype && <ArchetypeCard archetype={archetype} />}
       <button type="button" className={styles.closeBtn} onClick={onClose}>
-        Fermer
+        Close
       </button>
     </div>
   );

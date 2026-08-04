@@ -5,8 +5,10 @@
 .locked {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 20px;
+  height: 40px;
+  padding: 0 20px;
   border-radius: 4px;
   border: none;
   font-weight: bold;
@@ -31,6 +33,11 @@
   cursor: not-allowed;
 }
 
-.lockIcon {
+.lockIcon,
+.checkIcon {
   font-size: 0.9em;
+}
+
+.checkIcon {
+  color: #4ade80;
 }

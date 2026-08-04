@@ -276,7 +276,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
     );
   }
 
-  // ── Chargement game context ───────────────────────────────────────────────────
+  // ── Loading game context ────────────────────────────────────────────────────
   if (gameLoading && !activeGame) {
     return (
       <div className={styles.errorContainer}>
@@ -286,7 +286,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
     );
   }
 
-  // ── Chargement ────────────────────────────────────────────────────────────────
+  // ── Loading ──────────────────────────────────────────────────────────────────
   if (isLoading || isProfileLoading) {
     return (
       <div className={styles.errorContainer}>

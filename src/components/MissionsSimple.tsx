@@ -44,7 +44,8 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
         onClick={() => setExpanded((prev) => !prev)}
         aria-expanded={expanded}
       >
-        <span className={styles.blockTitle} style={{ color: `var(--color-${colorVariant})` }}>
+        <span className={styles.blockTitle}>
+          <span className={styles.blockDot} style={{ backgroundColor: `var(--color-${colorVariant})` }} />
           {title}
         </span>
         <FaChevronDown
@@ -112,7 +113,16 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
         onClick={togglePanel}
         aria-label={open ? 'Collapse missions panel' : 'Expand missions panel'}
       >
-        <FaChevronRight className={[styles.handleChevron, open ? styles.handleChevronOpen : ''].join(' ')} />
+        <FaChevronRight
+          color="#ffd32a"
+          style={{
+            width: 14,
+            height: 14,
+            flexShrink: 0,
+            transform: open ? 'rotate(180deg)' : 'none',
+            transition: 'transform 0.2s ease',
+          }}
+        />
       </button>
 
       <div className={styles.content} style={{ width: open ? '320px' : '0px' }}>
@@ -122,6 +132,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
               <span className={styles.headerTitle}>Missions</span>
               <span className={styles.headerXp}>{totalXp} XP</span>
             </div>
+            <div className={styles.divider} />
 
             {isLoading && <p className={styles.status}>Loading missions...</p>}
             {error && <p className={styles.status}>Failed to load missions.</p>}

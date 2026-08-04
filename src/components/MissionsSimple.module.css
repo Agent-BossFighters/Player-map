@@ -16,16 +16,9 @@
   background-color: var(--color-background-secondary);
   border: none;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+  appearance: none;
   cursor: pointer;
-}
-
-.handleChevron {
-  color: var(--color-primary);
-  transition: transform 0.2s ease;
-}
-
-.handleChevronOpen {
-  transform: rotate(180deg);
 }
 
 .content {
@@ -64,6 +57,11 @@
   font-size: 0.9em;
 }
 
+.divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
 .status {
   color: #aaa;
   font-size: 0.9em;
@@ -86,8 +84,20 @@
 }
 
 .blockTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-weight: bold;
   font-size: 0.95em;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.blockDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .chevron {
@@ -109,6 +119,10 @@
   color: #666;
   font-size: 0.85em;
   font-style: italic;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 10px 12px;
+  text-align: center;
 }
 
 .claimError {
