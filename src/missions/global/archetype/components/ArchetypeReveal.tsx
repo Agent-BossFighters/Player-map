@@ -57,7 +57,7 @@ const ArchetypeReveal: React.FC<ArchetypeRevealProps> = ({
     <div className={styles.wrapper}>
       <ArchetypeCard archetype={archetype} animate />
       <button type="button" className={styles.closeBtn} onClick={onClose}>
-        Fermer
+        Close
       </button>
     </div>
   );

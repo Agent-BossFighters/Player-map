@@ -10,7 +10,8 @@
 .progressSteps {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .progressStep {
@@ -26,15 +27,15 @@
 }
 
 .stepCircle {
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
   font-weight: bold;
-  font-size: 0.85em;
+  font-size: 0.9em;
   background-color: #2e2e40;
   color: #fff;
 }

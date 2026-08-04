@@ -13,22 +13,45 @@
 
 .btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 56px;
-  padding: 12px 14px;
-  font-size: 1.4em;
+  gap: 10px;
+  min-width: 110px;
+  padding: 18px 16px;
   background-color: #1e1e30;
   border: 1px solid #333;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: border-color 0.15s, background-color 0.15s;
+}
+
+.icon {
+  width: 26px;
+  height: 26px;
+}
+
+.label {
+  color: #aaa;
+  font-size: 0.72em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+
+.btnSelected .label {
+  color: var(--color-primary);
 }
 
 .groupCompact .btn {
   min-width: 44px;
   padding: 8px 10px;
-  font-size: 1.1em;
+}
+
+.groupCompact .icon {
+  width: 18px;
+  height: 18px;
 }
 
 .btn:hover {

@@ -1,6 +1,8 @@
 import React from 'react';
 import styles from './IntensitySelector.module.css';
 import { AnswerCurve, AnswerIntensity, AnswerValue } from '../hooks/useArchetypeDraft';
+import upSvg from '../../../../assets/img/up.svg';
+import downSvg from '../../../../assets/img/down.svg';
 
 interface IntensitySelectorProps {
   value: AnswerValue | null | undefined;
@@ -8,11 +10,13 @@ interface IntensitySelectorProps {
   compact?: boolean;
 }
 
+// Intensity is conveyed by which asset variant is used (filled = strong,
+// outline = weak), direction by up vs down — one icon per block, no doubling.
 const OPTIONS: Array<{ curve: AnswerCurve; intensity: AnswerIntensity; icon: string; label: string }> = [
-  { curve: 'against', intensity: 'fort', icon: '👎👎', label: 'Fortement contre' },
-  { curve: 'against', intensity: 'faible', icon: '👎', label: 'Contre' },
-  { curve: 'for', intensity: 'faible', icon: '👍', label: 'Pour' },
-  { curve: 'for', intensity: 'fort', icon: '👍👍', label: 'Fortement pour' },
+  { curve: 'against', intensity: 'fort', icon: downSvg, label: 'Strongly disagree' },
+  { curve: 'against', intensity: 'faible', icon: downSvg, label: 'Disagree' },
+  { curve: 'for', intensity: 'faible', icon: upSvg, label: 'Agree' },
+  { curve: 'for', intensity: 'fort', icon: upSvg, label: 'Strongly agree' },
 ];
 
 const IntensitySelector: React.FC<IntensitySelectorProps> = ({ value, onChange, compact = false }) => {
@@ -40,8 +44,8 @@ const IntensitySelector: React.FC<IntensitySelectorProps> = ({ value, onChange, 
             onClick={() => onChange({ curve: opt.curve, intensity: opt.intensity })}
             onKeyDown={(e) => handleKeyDown(e, i)}
           >
-            <span aria-hidden="true">{opt.icon}</span>
-            <span className={styles.srOnly}>{opt.label}</span>
+            <img src={opt.icon} alt="" aria-hidden="true" className={styles.icon} />
+            <span className={compact ? styles.srOnly : styles.label}>{opt.label}</span>
           </button>
         );
       })}

@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { FaTimes } from 'react-icons/fa';
+import archetypeAgentImg from '../../../assets/img/archetype-agent.png';
 import StepProgressBar from './components/StepProgressBar';
 import IntensitySelector from './components/IntensitySelector';
 import MultiRatingSelector from './components/MultiRatingSelector';
@@ -112,7 +114,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
     return (
       <div className={styles.overlay}>
         <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close">
-          ×
+          <FaTimes style={{ width: 14, height: 14, flexShrink: 0 }} />
         </button>
         <p className={styles.loadingText}>Loading...</p>
       </div>
@@ -122,13 +124,16 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
   if (phase === 'intro') {
     return (
       <div className={styles.overlay}>
-        <div className={styles.stepContent}>
-          <p className={styles.questionText}>
-            Before you dive into the adventure, we've got one question for you: what kind of
-            player are you, really? This quick questionnaire helps us understand your style —
-            collector, competitor, or just here to unwind. Takes 2 minutes, and it kicks off your
-            player profile on Player Map.
-          </p>
+        <div className={styles.introContent}>
+          <div className={styles.introBlock}>
+            <img src={archetypeAgentImg} alt="" className={styles.introImage} />
+            <p className={styles.introText}>
+              Before you dive into the adventure, we've got one question for you: what kind of
+              player are you, really? This quick questionnaire helps us understand your style —
+              collector, competitor, or just here to unwind. Takes 2 minutes, and it kicks off your
+              player profile on Player Map.
+            </p>
+          </div>
         </div>
         <div className={styles.navRow}>
           <button type="button" className={styles.prevBtn} onClick={onClose}>
@@ -170,7 +175,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
   const singleQuestion = currentStep.questions[0];
   // Auto-advance uniquement pour une step à 1 question intensity_for_against
   // (un seul choix binaire, sans ambiguïté). Une step multi_rating à 1 question
-  // peut porter plusieurs options — on garde le bouton "Suivant" pour laisser
+  // peut porter plusieurs options — on garde le bouton "Next" pour laisser
   // le temps de toutes les évaluer.
   const isAutoAdvanceStep = isSingleQuestionStep && singleQuestion.type === 'intensity_for_against';
   const tableQuestionType = !isSingleQuestionStep ? currentStep.questions[0].type : null;
@@ -178,11 +183,30 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
   const getMultiRatingAnswer = (questionId: string): MultiRatingAnswer =>
     (draft.answers[questionId] as MultiRatingAnswer | undefined) ?? {};
 
+  const answeredCount = steps.filter((_, i) => draft.isStepComplete(i)).length;
+
   return (
     <div className={styles.overlay}>
+      <div className={styles.contentWrapper}>
       <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close">
-        ×
+        <FaTimes style={{ width: 14, height: 14, flexShrink: 0 }} />
       </button>
+
+      <div className={styles.progressHeader}>
+        <div className={styles.progressHeaderRow}>
+          <span className={styles.progressHeaderLabel}>
+            QUESTION <strong>{draft.currentStepIndex + 1}</strong> / {steps.length}
+          </span>
+          <span className={styles.progressHeaderCount}>{answeredCount} answered</span>
+        </div>
+        <div className={styles.progressHeaderTrack}>
+          <div
+            className={styles.progressHeaderFill}
+            style={{ width: `${((draft.currentStepIndex + 1) / steps.length) * 100}%` }}
+          />
+        </div>
+      </div>
+      </div>
 
       <div className={styles.stepContent}>
         {currentStep.title && <h2 className={styles.stepTitle}>{currentStep.title}</h2>}
@@ -279,7 +303,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
           onClick={() => draft.setStepIndex(draft.currentStepIndex - 1)}
           disabled={draft.currentStepIndex === 0}
         >
-          Précédent
+          ‹ Previous
         </button>
 
         {!isAutoAdvanceStep && (
@@ -289,7 +313,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
             onClick={advanceOrSubmit}
             disabled={!draft.isStepComplete(draft.currentStepIndex)}
           >
-            {isLastStep ? 'Terminer' : 'Suivant'}
+            {isLastStep ? 'Finish' : 'Next ›'}
           </button>
         )}
       </div>
