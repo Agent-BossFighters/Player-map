@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { FaChevronDown, FaChevronRight, FaClock } from 'react-icons/fa';
 import { useMissions } from '../missions/shared/useMissions';
 import { useClaimMission } from '../missions/shared/useClaimMission';
+import { ClaimError } from '../missions/shared/claimApi';
 import MissionCard from '../missions/shared/MissionCard';
 import type { Mission } from '../types/Missions';
 import styles from './MissionsSimple.module.css';
@@ -22,6 +23,7 @@ interface MissionBlockProps {
   pendingMissionId?: string;
   errorMissionId?: string;
   errorMessage?: string;
+  errorIsRateLimit?: boolean;
 }
 
 const MissionBlock: React.FC<MissionBlockProps> = ({
@@ -33,6 +35,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
   pendingMissionId,
   errorMissionId,
   errorMessage,
+  errorIsRateLimit,
 }) => {
   const [expanded, setExpanded] = useState(true);
 
@@ -69,7 +72,10 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
                   onClaim={() => onClaim(mission)}
                 />
                 {errorMissionId === mission.id && (
-                  <p className={styles.claimError}>{errorMessage}</p>
+                  <p className={errorIsRateLimit ? styles.claimRateLimit : styles.claimError}>
+                    {errorIsRateLimit && <FaClock className={styles.rateLimitIcon} />}
+                    {errorMessage}
+                  </p>
                 )}
               </div>
             );
@@ -102,8 +108,17 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
   };
 
   const pendingMissionId = claimMutation.isPending ? claimMutation.variables : undefined;
-  const errorMissionId = claimMutation.isError ? claimMutation.variables : undefined;
+
+  // 409 (stale claimed state) is self-healing: onError already refetches, and
+  // once that lands the mission's real status flips to 'claimed' and the
+  // button re-renders as CLAIMED on its own — no error text needed for it.
+  const claimErrorStatus =
+    claimMutation.isError && claimMutation.error instanceof ClaimError ? claimMutation.error.status : undefined;
+  const isStaleClaim = claimErrorStatus === 409;
+
+  const errorMissionId = claimMutation.isError && !isStaleClaim ? claimMutation.variables : undefined;
   const errorMessage = claimMutation.isError ? claimMutation.error.message : undefined;
+  const errorIsRateLimit = claimErrorStatus === 429;
 
   return (
     <div className={styles.wrapper}>
@@ -148,6 +163,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   pendingMissionId={pendingMissionId}
                   errorMissionId={errorMissionId}
                   errorMessage={errorMessage}
+                  errorIsRateLimit={errorIsRateLimit}
                 />
                 <MissionBlock
                   title="Global"
@@ -158,6 +174,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   pendingMissionId={pendingMissionId}
                   errorMissionId={errorMissionId}
                   errorMessage={errorMessage}
+                  errorIsRateLimit={errorIsRateLimit}
                 />
                 <MissionBlock
                   title="Social"
@@ -168,6 +185,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   pendingMissionId={pendingMissionId}
                   errorMissionId={errorMissionId}
                   errorMessage={errorMessage}
+                  errorIsRateLimit={errorIsRateLimit}
                 />
               </>
             )}

@@ -130,3 +130,17 @@
   font-size: 0.8em;
   margin-top: 4px;
 }
+
+.claimRateLimit {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #f59e0b;
+  font-size: 0.8em;
+  margin-top: 4px;
+}
+
+.rateLimitIcon {
+  flex-shrink: 0;
+  font-size: 0.9em;
+}
