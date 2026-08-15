@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { FaChevronDown, FaChevronRight, FaClock } from 'react-icons/fa';
+import { FaChevronDown, FaChevronRight, FaClock, FaFire } from 'react-icons/fa';
 import { useMissions } from '../missions/shared/useMissions';
 import { useClaimMission } from '../missions/shared/useClaimMission';
 import { ClaimError } from '../missions/shared/claimApi';
 import MissionCard from '../missions/shared/MissionCard';
 import type { Mission } from '../types/Missions';
+import MissionsExpanded from './MissionsExpanded';
 import styles from './MissionsSimple.module.css';
 
 const PANEL_STORAGE_KEY = 'playermap_missionsPanelOpen';
+
+type MissionCategory = 'daily' | 'global' | 'social';
 
 interface MissionsSimpleProps {
   walletAddress?: string;
@@ -17,7 +20,7 @@ interface MissionsSimpleProps {
 
 interface MissionBlockProps {
   title: string;
-  colorVariant: 'daily' | 'global' | 'social';
+  colorVariant: MissionCategory;
   missions: Mission[];
   emptyLabel: string;
   onClaim: (mission: Mission) => void;
@@ -26,6 +29,8 @@ interface MissionBlockProps {
   errorMessage?: string;
   errorIsRateLimit?: boolean;
   onOpenArchetype?: () => void;
+  onSeeMore: (category: MissionCategory) => void;
+  streak?: number;
 }
 
 const MissionBlock: React.FC<MissionBlockProps> = ({
@@ -39,8 +44,16 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
   errorMessage,
   errorIsRateLimit,
   onOpenArchetype,
+  onSeeMore,
+  streak,
 }) => {
   const [expanded, setExpanded] = useState(true);
+
+  // Panel is a preview: show the first not-yet-claimed mission (existing
+  // order), or the last one (claimed, greyed) if the whole group is done —
+  // never an empty block when missions actually exist.
+  const visibleMission = missions.length === 0 ? undefined : (missions.find((m) => m.status !== 'claimed') ?? missions[missions.length - 1]);
+  const categoryXp = missions.reduce((sum, m) => sum + m.reward.xp, 0);
 
   return (
     <div className={styles.block}>
@@ -54,36 +67,51 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
           <span className={styles.blockDot} style={{ backgroundColor: `var(--color-${colorVariant})` }} />
           {title}
         </span>
-        <FaChevronDown
-          className={[styles.chevron, expanded ? styles.chevronOpen : ''].join(' ')}
-        />
+        <span className={styles.blockHeaderRight}>
+          {!!streak && (
+            <span className={styles.streakBadge}>
+              <FaFire className={styles.streakIcon} /> {streak}
+            </span>
+          )}
+          <span className={styles.blockXp}>{categoryXp} PX</span>
+          <FaChevronDown
+            className={[styles.chevron, expanded ? styles.chevronOpen : ''].join(' ')}
+          />
+        </span>
       </button>
 
       {expanded && (
         <div className={styles.blockContent}>
-          {missions.length === 0 && <p className={styles.emptyState}>{emptyLabel}</p>}
-          {missions.map((mission) => {
-            const isPending = pendingMissionId === mission.id;
-            return (
-              <div
-                key={mission.id}
-                style={isPending ? { opacity: 0.6, pointerEvents: 'none' } : undefined}
-              >
-                <MissionCard
-                  mission={mission}
-                  status={mission.status}
-                  onClaim={() => onClaim(mission)}
-                  onOpenArchetype={onOpenArchetype}
-                />
-                {errorMissionId === mission.id && (
-                  <p className={errorIsRateLimit ? styles.claimRateLimit : styles.claimError}>
-                    {errorIsRateLimit && <FaClock className={styles.rateLimitIcon} />}
-                    {errorMessage}
-                  </p>
-                )}
-              </div>
-            );
-          })}
+          {!visibleMission && <p className={styles.emptyState}>{emptyLabel}</p>}
+          {visibleMission && (
+            <div
+              key={visibleMission.id}
+              style={pendingMissionId === visibleMission.id ? { opacity: 0.6, pointerEvents: 'none' } : undefined}
+            >
+              <MissionCard
+                mission={visibleMission}
+                status={visibleMission.status}
+                onClaim={() => onClaim(visibleMission)}
+                onOpenArchetype={onOpenArchetype}
+              />
+              {errorMissionId === visibleMission.id && (
+                <p className={errorIsRateLimit ? styles.claimRateLimit : styles.claimError}>
+                  {errorIsRateLimit && <FaClock className={styles.rateLimitIcon} />}
+                  {errorMessage}
+                </p>
+              )}
+            </div>
+          )}
+          <button
+            type="button"
+            className={styles.seeMoreBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSeeMore(colorVariant);
+            }}
+          >
+            See more
+          </button>
         </div>
       )}
     </div>
@@ -98,6 +126,14 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
 
   const { grouped, totalXp, isLoading, error } = useMissions(walletAddress);
   const claimMutation = useClaimMission({ address: walletAddress, getAccessToken });
+
+  const [expandedOpen, setExpandedOpen] = useState(false);
+  const [expandedCategory, setExpandedCategory] = useState<MissionCategory>('daily');
+
+  const handleSeeMore = (category: MissionCategory) => {
+    setExpandedCategory(category);
+    setExpandedOpen(true);
+  };
 
   const togglePanel = () => {
     setOpen((prev) => {
@@ -123,6 +159,8 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
   const errorMissionId = claimMutation.isError && !isStaleClaim ? claimMutation.variables : undefined;
   const errorMessage = claimMutation.isError ? claimMutation.error.message : undefined;
   const errorIsRateLimit = claimErrorStatus === 429;
+
+  const dailyLoginStreak = grouped.daily.find((m) => m.id === 'daily-login' && m.type === 'daily')?.streak;
 
   return (
     <div className={styles.wrapper}>
@@ -169,6 +207,8 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorMessage={errorMessage}
                   errorIsRateLimit={errorIsRateLimit}
                   onOpenArchetype={onOpenArchetype}
+                  onSeeMore={handleSeeMore}
+                  streak={dailyLoginStreak}
                 />
                 <MissionBlock
                   title="Global"
@@ -181,6 +221,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorMessage={errorMessage}
                   errorIsRateLimit={errorIsRateLimit}
                   onOpenArchetype={onOpenArchetype}
+                  onSeeMore={handleSeeMore}
                 />
                 <MissionBlock
                   title="Social"
@@ -193,12 +234,22 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorMessage={errorMessage}
                   errorIsRateLimit={errorIsRateLimit}
                   onOpenArchetype={onOpenArchetype}
+                  onSeeMore={handleSeeMore}
                 />
               </>
             )}
           </div>
         )}
       </div>
+
+      <MissionsExpanded
+        isOpen={expandedOpen}
+        initialCategory={expandedCategory}
+        walletAddress={walletAddress}
+        getAccessToken={getAccessToken}
+        onOpenArchetype={onOpenArchetype}
+        onClose={() => setExpandedOpen(false)}
+      />
     </div>
   );
 };

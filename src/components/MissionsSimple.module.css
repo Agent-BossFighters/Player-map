@@ -100,6 +100,55 @@
   flex-shrink: 0;
 }
 
+.blockHeaderRight {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.blockXp {
+  color: var(--color-primary);
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.streakBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #f59e0b;
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.streakIcon {
+  flex-shrink: 0;
+  font-size: 0.9em;
+}
+
+.seeMoreBtn {
+  align-self: center;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #aaa;
+  font-size: 0.78em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.seeMoreBtn:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
 .chevron {
   color: #aaa;
   transition: transform 0.2s ease;

@@ -3,6 +3,7 @@ import type { Mission, MissionStatus } from '../../types/Missions';
 import ProgressBar from './ProgressBar';
 import RewardBadge from './RewardBadge';
 import ClaimButton from './ClaimButton';
+import LevelBadge from './LevelBadge';
 import styles from './MissionCard.module.css';
 
 interface MissionCardProps {
@@ -38,7 +39,10 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, chi
     >
       <div className={styles.header}>
         <span className={styles.title}>{missionHeader(mission)}</span>
-        <RewardBadge xp={mission.reward.xp} />
+        <div className={styles.badges}>
+          {mission.type === 'global' && <LevelBadge mission={mission} />}
+          <RewardBadge xp={mission.reward.xp} />
+        </div>
       </div>
 
       <ProgressBar

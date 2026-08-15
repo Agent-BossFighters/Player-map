@@ -16,6 +16,9 @@ export interface DailyMission extends BaseMission {
   type: 'daily'
   title: string
   resetsAt: string
+  // daily-login only — undefined for other daily missions (e.g. daily-vote).
+  streak?: number
+  longestStreak?: number
 }
 
 export interface GlobalMission extends BaseMission {
@@ -23,6 +26,10 @@ export interface GlobalMission extends BaseMission {
   level: number
   maxLevel: number
   titleType: string
+  // Tiered missions only (e.g. player-votes) — preview of the reward for
+  // the tier after the one currently claimable. Undefined once maxLevel is
+  // reached, and always undefined for non-tiered global missions.
+  nextTierXp?: number
 }
 
 export interface SocialMission extends BaseMission {
