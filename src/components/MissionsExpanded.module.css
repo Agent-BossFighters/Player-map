@@ -8,9 +8,9 @@
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(4px);
-  /* Same layer as ArchetypeMission's overlay (z-index 3000) — both must sit
-     above Graph2D/Graph3D's legend (z-index 2000). Mounted after it in the
-     DOM, so on a same-z tie it still paints on top when both are open. */
+  /* Above Graph2D/Graph3D's legend (z-index 2000). Strictly below
+     ArchetypeMission's overlay (3100) — that modal opens from within this
+     popup and must paint over it. */
   z-index: 3000;
   display: flex;
   justify-content: center;
@@ -162,6 +162,20 @@
   color: var(--color-primary);
   font-weight: bold;
   font-size: 0.78em;
+}
+
+.streakBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #f59e0b;
+  font-weight: bold;
+  font-size: 0.78em;
+}
+
+.streakIcon {
+  flex-shrink: 0;
+  font-size: 0.9em;
 }
 
 .missionColumn {

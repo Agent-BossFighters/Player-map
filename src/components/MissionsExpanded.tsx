@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaClock, FaGlobe, FaUsers, FaTimes } from 'react-icons/fa';
+import { FaClock, FaGlobe, FaUsers, FaTimes, FaFire } from 'react-icons/fa';
 import { useMissions } from '../missions/shared/useMissions';
 import { useClaimMission } from '../missions/shared/useClaimMission';
 import { ClaimError } from '../missions/shared/claimApi';
@@ -60,6 +60,8 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
   const errorMissionId = claimMutation.isError && !isStaleClaim ? claimMutation.variables : undefined;
   const errorMessage = claimMutation.isError ? claimMutation.error.message : undefined;
 
+  const dailyLoginStreak = grouped.daily.find((m) => m.id === 'daily-login' && m.type === 'daily')?.streak;
+
   const activeMissions = grouped[activeCategory];
   const activeCategoryMeta = CATEGORIES.find((c) => c.key === activeCategory)!;
   const activeCategoryXp = activeMissions.reduce((sum, m) => sum + m.reward.xp, 0);
@@ -102,7 +104,11 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
                         <Icon className={styles.categoryIconSvg} />
                       </span>
                       <span className={styles.categoryTitle}>{title}</span>
-                      <span className={styles.categoryXp}>{categoryXp} PX</span>
+                      {key === 'daily' && !!dailyLoginStreak && (
+                        <span className={styles.streakBadge}>
+                          <FaFire className={styles.streakIcon} /> {dailyLoginStreak}
+                        </span>
+                      )}
                     </div>
                     <ProgressBar current={claimedCount} target={Math.max(missions.length, 1)} colorVariant={key} />
                   </button>
@@ -116,6 +122,11 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
                   <ActiveIcon className={styles.missionColumnIconSvg} />
                 </span>
                 <span className={styles.missionColumnTitle}>{activeCategoryMeta.title}</span>
+                {activeCategory === 'daily' && !!dailyLoginStreak && (
+                  <span className={styles.streakBadge}>
+                    <FaFire className={styles.streakIcon} /> {dailyLoginStreak}
+                  </span>
+                )}
                 <span className={styles.missionColumnXp}>{activeCategoryXp} PX</span>
               </div>
 

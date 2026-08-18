@@ -9,8 +9,11 @@
   background-color: rgba(0, 0, 0, 0.96);
   backdrop-filter: blur(2px);
   /* Graph2D/Graph3D wrap their legend/controls at z-index 2000 too — this
-     must stay strictly above that or the legend paints on top (DOM-order tie). */
-  z-index: 3000;
+     must stay strictly above that or the legend paints on top (DOM-order tie).
+     Must also stay strictly above MissionsExpanded's overlay (3000): this
+     modal opens from within that popup and must paint over it, regardless
+     of DOM mount order. */
+  z-index: 3100;
   display: flex;
   flex-direction: column;
   justify-content: center;
