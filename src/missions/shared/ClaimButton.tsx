@@ -39,7 +39,10 @@ const ClaimButton: React.FC<ClaimButtonProps> = ({ status, missionType, onClaim,
       <button
         type="button"
         className={styles.action}
-        onClick={() => link && window.open(link, '_blank', 'noopener,noreferrer')}
+        onClick={(e) => {
+          e.stopPropagation(); // archetype/global cards open a modal on click — don't also trigger that
+          if (link) window.open(link, '_blank', 'noopener,noreferrer');
+        }}
       >
         LINK
       </button>
@@ -47,7 +50,14 @@ const ClaimButton: React.FC<ClaimButtonProps> = ({ status, missionType, onClaim,
   }
 
   return (
-    <button type="button" className={styles.action} onClick={onClaim}>
+    <button
+      type="button"
+      className={styles.action}
+      onClick={(e) => {
+        e.stopPropagation(); // archetype card opens the archetype modal on click — don't also trigger that
+        onClaim();
+      }}
+    >
       CLAIM
     </button>
   );

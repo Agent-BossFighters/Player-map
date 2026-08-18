@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 import archetypeAgentImg from '../../../assets/img/archetype-agent.png';
-import StepProgressBar from './components/StepProgressBar';
 import IntensitySelector from './components/IntensitySelector';
 import MultiRatingSelector from './components/MultiRatingSelector';
 import ArchetypeBadge from './components/ArchetypeBadge';
@@ -69,24 +68,58 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
     }
   }, [isOpen, walletAddress]);
 
-  const draft = useArchetypeDraft(walletAddress);
+  // Partial completion (some questions voted on-chain, but not all) — only
+  // re-prompt the still-missing question(s) instead of the full 15.
+  const missingTripleIds =
+    completion && !completion.completed && completion.votedCount > 0
+      ? completion.missingTripleIds
+      : undefined;
+  const isFixingMissing = !!missingTripleIds && missingTripleIds.length > 0;
+
+  const draft = useArchetypeDraft(walletAddress, missingTripleIds);
   const { submit, isSubmitting, error: submitError } = useArchetypeSubmission({
     walletConnected,
     walletAddress,
   });
   const { archetype, refetch: refetchArchetype } = usePlayerArchetype(walletAddress);
+  // Set only when the on-chain deposits succeeded but the subgraph still
+  // hasn't indexed them after polling — distinct from submitError (an
+  // actual tx failure), so its retry just re-polls instead of restarting
+  // the whole questionnaire.
+  const [revealError, setRevealError] = useState<string | null>(null);
 
   const steps = draft.steps;
   const currentStep = steps[draft.currentStepIndex];
   const isLastStep = draft.currentStepIndex === steps.length - 1;
 
+  // computeArchetype requires every triple to be indexed by the subgraph
+  // (completed === votedCount === total) — right after the depositBatch tx
+  // confirms, the subgraph is usually a few seconds behind, so a single
+  // refetch right after submit reliably comes back empty. Poll instead.
+  const pollForArchetype = useCallback(async (): Promise<boolean> => {
+    const ATTEMPTS = 8;
+    const DELAY_MS = 2500;
+    for (let i = 0; i < ATTEMPTS; i++) {
+      const result = await refetchArchetype();
+      if (result.data) return true;
+      if (i < ATTEMPTS - 1) await new Promise((resolve) => setTimeout(resolve, DELAY_MS));
+    }
+    return false;
+  }, [refetchArchetype]);
+
   const advanceOrSubmit = useCallback(async () => {
     if (isLastStep) {
       setPhase('submitting');
+      setRevealError(null);
       const success = await submit(draft.answers);
       if (success) {
         draft.clear();
-        await refetchArchetype();
+        const found = await pollForArchetype();
+        if (!found) {
+          setRevealError(
+            "Tes votes sont bien enregistrés on-chain, mais l'analyse prend plus de temps que prévu. Réessaie dans quelques instants."
+          );
+        }
         setPhase('reveal');
       }
       // en cas d'échec on reste en 'submitting' : ArchetypeReveal affiche l'erreur + retry
@@ -94,7 +127,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
       draft.setStepIndex(draft.currentStepIndex + 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLastStep, submit, draft, refetchArchetype]);
+  }, [isLastStep, submit, draft, pollForArchetype]);
 
   const handleAutoAdvanceAnswer = useCallback((question: ArchetypeQuestion, value: AnswerValue) => {
     draft.setAnswer(question.id, value);
@@ -104,9 +137,19 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft, advanceOrSubmit]);
 
-  const handleRetry = useCallback(() => {
+  const handleRetry = useCallback(async () => {
+    if (revealError) {
+      setRevealError(null);
+      const found = await pollForArchetype();
+      if (!found) {
+        setRevealError(
+          "Tes votes sont bien enregistrés on-chain, mais l'analyse prend plus de temps que prévu. Réessaie dans quelques instants."
+        );
+      }
+      return;
+    }
     setPhase('steps');
-  }, []);
+  }, [revealError, pollForArchetype]);
 
   if (!isOpen || !walletAddress) return null;
 
@@ -161,7 +204,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
         <ArchetypeReveal
           isSubmitting={phase === 'submitting' && isSubmitting}
           archetype={phase === 'reveal' ? archetype : null}
-          submitError={submitError}
+          submitError={submitError ?? revealError}
           onRetry={handleRetry}
           onClose={onClose}
         />
@@ -209,6 +252,12 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
       </div>
 
       <div className={styles.stepContent}>
+        {isFixingMissing && (
+          <p className={styles.missingAnswerNotice}>
+            <FaExclamationTriangle className={styles.missingAnswerIcon} />
+            Une de tes réponses n'a pas été prise en compte — réponds à nouveau.
+          </p>
+        )}
         {currentStep.title && <h2 className={styles.stepTitle}>{currentStep.title}</h2>}
 
         {isSingleQuestionStep ? (
@@ -289,13 +338,6 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
         )}
       </div>
 
-      <StepProgressBar
-        totalSteps={steps.length}
-        currentStepIndex={draft.currentStepIndex}
-        maxReachedStepIndex={draft.maxReachedStepIndex}
-        onStepClick={draft.setStepIndex}
-      />
-
       <div className={styles.navRow}>
         <button
           type="button"
@@ -306,7 +348,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
           ‹ Previous
         </button>
 
-        {!isAutoAdvanceStep && (
+        {(!isAutoAdvanceStep || draft.isStepComplete(draft.currentStepIndex)) && (
           <button
             type="button"
             className={styles.nextBtn}

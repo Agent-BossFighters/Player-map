@@ -49,7 +49,7 @@ function isMultiRatingAnswer(value: AnswerValue | MultiRatingAnswer): value is M
   return !('curve' in value);
 }
 
-export function useArchetypeDraft(address?: string) {
+export function useArchetypeDraft(address?: string, visibleTripleIds?: string[]) {
   const addressRef = useRef(address);
   const [draft, setDraft] = useState<ArchetypeDraftData>(() =>
     address ? loadDraft(address) : createEmptyDraft()
@@ -69,10 +69,20 @@ export function useArchetypeDraft(address?: string) {
     localStorage.setItem(draftKey(address), JSON.stringify(draft));
   }, [address, draft]);
 
-  const steps: ArchetypeStep[] = useMemo(
-    () => shuffleStepsWithSeed(ARCHETYPE_STEPS, draft.seed),
-    [draft.seed]
-  );
+  // visibleTripleIds narrows the flow to just the not-yet-voted question(s)
+  // (e.g. re-prompting after a partial submit) — filtered here, inside the
+  // hook, so isStepComplete/currentStepIndex stay consistent with the same
+  // reduced array rather than indexing into two different step lists.
+  const steps: ArchetypeStep[] = useMemo(() => {
+    const shuffled = shuffleStepsWithSeed(ARCHETYPE_STEPS, draft.seed);
+    if (!visibleTripleIds) return shuffled;
+    const allowed = new Set(visibleTripleIds);
+    const questionHasVisibleTriple = (q: ArchetypeQuestion): boolean =>
+      q.type === 'intensity_for_against'
+        ? allowed.has(q.tripleId)
+        : q.options.some(opt => allowed.has(opt.tripleId));
+    return shuffled.filter(step => step.questions.some(questionHasVisibleTriple));
+  }, [draft.seed, visibleTripleIds]);
 
   const setAnswer = useCallback((questionId: string, value: AnswerValue | MultiRatingAnswer) => {
     setDraft(prev => ({

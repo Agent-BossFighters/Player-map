@@ -9,8 +9,10 @@ interface MissionRowProps {
   mission: Mission;
   status: MissionStatus;
   onClaim: () => void;
-  /** Opens the archetype questionnaire modal — only invoked for the
-   * archetype mission row while it's in_progress, same guard as MissionCard. */
+  /** Opens the archetype modal — only invoked for the archetype mission row,
+   * same guard as MissionCard. The modal itself decides what to show (the
+   * questionnaire, or the revealed archetype once completed), so this stays
+   * clickable regardless of claim status. */
   onOpenArchetype?: () => void;
 }
 
@@ -26,13 +28,13 @@ function rowTitle(mission: Mission): string {
 }
 
 const MissionRow: React.FC<MissionRowProps> = ({ mission, status, onClaim, onOpenArchetype }) => {
-  const isArchetypeInProgress = mission.id === 'archetype' && status === 'in_progress';
+  const isArchetype = mission.id === 'archetype';
 
   return (
     <div
       className={styles.row}
-      onClick={isArchetypeInProgress ? onOpenArchetype : undefined}
-      style={isArchetypeInProgress ? { cursor: 'pointer' } : undefined}
+      onClick={isArchetype ? onOpenArchetype : undefined}
+      style={isArchetype ? { cursor: 'pointer' } : undefined}
     >
       <span className={styles.title}>{rowTitle(mission)}</span>
 

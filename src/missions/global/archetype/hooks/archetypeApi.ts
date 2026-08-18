@@ -7,6 +7,9 @@ export interface ArchetypeCompletionResponse {
   completed: boolean;
   votedCount: number;
   total: number;
+  // tripleIds still missing a valid on-chain vote — used to re-prompt only
+  // the outstanding question(s) instead of the whole questionnaire.
+  missingTripleIds: string[];
 }
 
 export interface PlayerArchetypeResponse {
@@ -46,8 +49,8 @@ export async function fetchArchetypeCompletion(address: string): Promise<Archety
   if (isMockEnabled()) {
     await delay(300);
     return isForcedCompleted()
-      ? { completed: true, votedCount: TOTAL_QUESTIONS, total: TOTAL_QUESTIONS }
-      : { completed: false, votedCount: 0, total: TOTAL_QUESTIONS };
+      ? { completed: true, votedCount: TOTAL_QUESTIONS, total: TOTAL_QUESTIONS, missingTripleIds: [] }
+      : { completed: false, votedCount: 0, total: TOTAL_QUESTIONS, missingTripleIds: [] };
   }
 
   const response = await fetch(workerUrl(`/api/player/${address}/preferences/completion`));

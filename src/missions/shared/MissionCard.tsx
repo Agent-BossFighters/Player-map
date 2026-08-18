@@ -11,9 +11,10 @@ interface MissionCardProps {
   status: MissionStatus;
   onClaim: () => void;
   children?: React.ReactNode;
-  /** Opens the archetype questionnaire modal. Only ever invoked for the
-   * archetype mission card while it's in_progress — see the onClick guard
-   * below. Other mission cards ignore this prop entirely. */
+  /** Opens the archetype modal. Only ever invoked for the archetype mission
+   * card — see the onClick guard below. The modal itself decides what to
+   * show (questionnaire vs. revealed archetype), so this stays clickable
+   * regardless of claim status. Other mission cards ignore this prop. */
   onOpenArchetype?: () => void;
 }
 
@@ -29,13 +30,13 @@ function missionHeader(mission: Mission): string {
 }
 
 const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, children, onOpenArchetype }) => {
-  const isArchetypeInProgress = mission.id === 'archetype' && status === 'in_progress';
+  const isArchetype = mission.id === 'archetype';
 
   return (
     <div
       className={styles.card}
-      onClick={isArchetypeInProgress ? onOpenArchetype : undefined}
-      style={isArchetypeInProgress ? { cursor: 'pointer' } : undefined}
+      onClick={isArchetype ? onOpenArchetype : undefined}
+      style={isArchetype ? { cursor: 'pointer' } : undefined}
     >
       <div className={styles.header}>
         <span className={styles.title}>{missionHeader(mission)}</span>

@@ -121,6 +121,22 @@
   text-align: center;
 }
 
+.missingAnswerNotice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef4444;
+  font-size: 1.05em;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.missingAnswerIcon {
+  flex-shrink: 0;
+  font-size: 1.1em;
+}
+
 /* ── Step à 1 question ─────────────────────────────────────────────────── */
 
 .standaloneQuestion {
