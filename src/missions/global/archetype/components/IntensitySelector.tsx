@@ -10,13 +10,12 @@ interface IntensitySelectorProps {
   compact?: boolean;
 }
 
-// Intensity is conveyed by which asset variant is used (filled = strong,
-// outline = weak), direction by up vs down — one icon per block, no doubling.
-const OPTIONS: Array<{ curve: AnswerCurve; intensity: AnswerIntensity; icon: string; label: string }> = [
-  { curve: 'against', intensity: 'fort', icon: downSvg, label: 'Strongly disagree' },
-  { curve: 'against', intensity: 'faible', icon: downSvg, label: 'Disagree' },
-  { curve: 'for', intensity: 'faible', icon: upSvg, label: 'Agree' },
-  { curve: 'for', intensity: 'fort', icon: upSvg, label: 'Strongly agree' },
+// Intensity is conveyed by icon count (strong = 2, weak = 1), direction by up vs down.
+const OPTIONS: Array<{ curve: AnswerCurve; intensity: AnswerIntensity; icon: string; iconCount: number; label: string }> = [
+  { curve: 'against', intensity: 'fort', icon: downSvg, iconCount: 2, label: 'Strongly disagree' },
+  { curve: 'against', intensity: 'faible', icon: downSvg, iconCount: 1, label: 'Disagree' },
+  { curve: 'for', intensity: 'faible', icon: upSvg, iconCount: 1, label: 'Agree' },
+  { curve: 'for', intensity: 'fort', icon: upSvg, iconCount: 2, label: 'Strongly agree' },
 ];
 
 const IntensitySelector: React.FC<IntensitySelectorProps> = ({ value, onChange, compact = false }) => {
@@ -44,7 +43,11 @@ const IntensitySelector: React.FC<IntensitySelectorProps> = ({ value, onChange, 
             onClick={() => onChange({ curve: opt.curve, intensity: opt.intensity })}
             onKeyDown={(e) => handleKeyDown(e, i)}
           >
-            <img src={opt.icon} alt="" aria-hidden="true" className={styles.icon} />
+            <div className={styles.iconGroup}>
+              {Array.from({ length: opt.iconCount }).map((_, iconIndex) => (
+                <img key={iconIndex} src={opt.icon} alt="" aria-hidden="true" className={styles.icon} />
+              ))}
+            </div>
             <span className={compact ? styles.srOnly : styles.label}>{opt.label}</span>
           </button>
         );

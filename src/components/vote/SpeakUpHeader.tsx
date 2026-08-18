@@ -34,6 +34,15 @@ const BAR_GRADIENT: Record<string, string> = {
   attestation: tripleSvg,
 };
 
+// Same thresholds/colors as the dashboard's GameScoreGauge score box.
+const getScoreColor = (value: number): string =>
+  value < 40 ? "#FF7188" :
+  value < 70 ? "#F1D02D" :
+  value < 90 ? "#40B25A" :
+               "#7BE17D";
+
+const SCORE_TOOLTIP_TEXT = "Player first game score calculated with player community feedback";
+
 const StatCard: React.FC<{
   label: string;
   value: number | string;
@@ -41,6 +50,10 @@ const StatCard: React.FC<{
   variant: "guild" | "player" | "triple" | "attestation" | "score";
 }> = ({ label, value, loading, variant }) => {
   const isBar = variant === "triple" || variant === "attestation";
+  const isScore = variant === "score";
+  const numericValue = typeof value === "number" ? value : Number(value);
+  const scoreColor = isScore && !Number.isNaN(numericValue) ? getScoreColor(numericValue) : undefined;
+  const [showScoreTooltip, setShowScoreTooltip] = useState(false);
 
   return (
     <div className={styles.statCard}>
@@ -63,12 +76,33 @@ const StatCard: React.FC<{
             <div className={styles.statBar} style={{ background: BAR_GRADIENT[variant] }} />
           )}
         </>
+      ) : isScore ? (
+        <div
+          className={styles.scoreWrapper}
+          onMouseEnter={() => setShowScoreTooltip(true)}
+          onMouseLeave={() => setShowScoreTooltip(false)}
+        >
+          <div
+            className={styles.statValueBoxScore}
+            style={scoreColor ? { background: scoreColor } : undefined}
+          >
+            {loading ? (
+              <div className={styles.skeleton} />
+            ) : (
+              <span className={styles.statNumberScore}>{value}</span>
+            )}
+          </div>
+          {showScoreTooltip && (
+            <div className={styles.tooltip}>
+              {SCORE_TOOLTIP_TEXT}
+              <div className={styles.tooltipArrow} />
+            </div>
+          )}
+        </div>
       ) : (
         <div
           className={`${styles.statValueBoxBase} ${
-            variant === "guild" ? styles.statValueBoxGuild
-            : variant === "player" ? styles.statValueBoxPlayer
-            : styles.statValueBoxScore
+            variant === "guild" ? styles.statValueBoxGuild : styles.statValueBoxPlayer
           }`}
         >
           {loading ? (
