@@ -42,8 +42,8 @@ function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const isMockEnabled = (): boolean => import.meta.env.VITE_USE_MOCK_PREFERENCES_API === 'true';
-const isForcedCompleted = (): boolean => import.meta.env.VITE_MOCK_PREFS_FORCE_COMPLETED === 'true';
+const isMockEnabled = (): boolean => import.meta.env.VITE_USE_MOCK_ARCHETYPE_API === 'true';
+const isForcedCompleted = (): boolean => import.meta.env.VITE_MOCK_ARCHETYPE_FORCE_COMPLETED === 'true';
 
 export async function fetchArchetypeCompletion(address: string): Promise<ArchetypeCompletionResponse> {
   if (isMockEnabled()) {
@@ -53,9 +53,9 @@ export async function fetchArchetypeCompletion(address: string): Promise<Archety
       : { completed: false, votedCount: 0, total: TOTAL_QUESTIONS, missingTripleIds: [] };
   }
 
-  const response = await fetch(workerUrl(`/api/player/${address}/preferences/completion`));
+  const response = await fetch(workerUrl(`/api/player/${address}/archetype/completion`));
   if (!response.ok) {
-    throw new Error(`Failed to fetch preferences completion: ${response.status}`);
+    throw new Error(`Failed to fetch archetype completion: ${response.status}`);
   }
   return response.json();
 }

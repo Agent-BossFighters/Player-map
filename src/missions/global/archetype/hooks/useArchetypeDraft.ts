@@ -24,7 +24,7 @@ interface ArchetypeDraftData {
   maxReachedStepIndex: number;
 }
 
-const draftKey = (address: string): string => `playermap:quest-draft:preferences:${address}`;
+const draftKey = (address: string): string => `playermap:quest-draft:archetype:${address}`;
 
 function createEmptyDraft(): ArchetypeDraftData {
   return {

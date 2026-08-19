@@ -3,7 +3,7 @@ import { fetchArchetypeCompletion } from './archetypeApi';
 
 export function useArchetypeCompletion(address?: string) {
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['preferenceCompletion', address],
+    queryKey: ['archetypeCompletion', address],
     queryFn: () => fetchArchetypeCompletion(address!),
     enabled: Boolean(address),
     staleTime: 30 * 1000,

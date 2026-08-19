@@ -165,9 +165,14 @@ export function useArchetypeSubmission({
 
       setTxHash(typeof hash === 'string' ? hash : (hash as { hash: string }).hash);
 
-      await queryClient.invalidateQueries({ queryKey: ['preferenceCompletion', walletAddress] });
+      await queryClient.invalidateQueries({ queryKey: ['archetypeCompletion', walletAddress] });
       await queryClient.invalidateQueries({ queryKey: ['playerArchetype', walletAddress] });
-      await queryClient.invalidateQueries({ queryKey: ['questStatus', 'preferences', walletAddress] });
+      await queryClient.invalidateQueries({ queryKey: ['questStatus', 'archetype', walletAddress] });
+      // Drives the CLAIM button on the mission card itself — without this the
+      // missions list (30s staleTime, never otherwise invalidated by this
+      // flow) keeps showing the pre-submit in_progress state until something
+      // else happens to refetch it (e.g. a full page reload).
+      await queryClient.invalidateQueries({ queryKey: ['missions', walletAddress] });
 
       return true;
     } catch (err: any) {
