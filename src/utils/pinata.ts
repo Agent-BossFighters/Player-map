@@ -46,6 +46,18 @@ const proxyIfDiscord = (url: string): string => {
   return `/.proxy/img-proxy?url=${encodeURIComponent(url)}`
 }
 
+// Matches a CID out of either an ipfs:// URI or any /ipfs/<CID> gateway URL,
+// so alternate gateways can be tried even when the stored src is already an
+// http(s) gateway URL (e.g. atoms created after useAtomCreation converts
+// ipfs:// to http before persisting the image field on-chain).
+const IPFS_CID_RE = /(?:ipfs:\/\/|\/ipfs\/)([a-zA-Z0-9]+)/
+
+export const extractIpfsHash = (url: string | undefined): string | null => {
+  if (!url) return null
+  const match = url.match(IPFS_CID_RE)
+  return match ? match[1] : null
+}
+
 export const ipfsToHttpUrl = (ipfsUrl: string): string => {
   if (!ipfsUrl) return ipfsUrl
 
@@ -55,13 +67,21 @@ export const ipfsToHttpUrl = (ipfsUrl: string): string => {
     return proxyIfDiscord(embedded)
   }
 
-  // Convert ipfs:// to HTTP
-  if (isIpfsUrl(ipfsUrl)) {
-    const hash = ipfsUrl.replace("ipfs://", "")
-    const httpUrl = `https://ipfs.io/ipfs/${hash}`
+  // Convert ipfs:// (or re-target an already-http /ipfs/<CID> URL, e.g. one
+  // persisted on-chain back when this always hardcoded ipfs.io) to the
+  // configured gateway. Every rendered avatar/atom image fires its own
+  // independent request (no dedup, no shared retry for the many consumers
+  // that call this directly instead of going through SafeImage), and
+  // bursts of parallel unauthenticated requests get Cloudflare-challenged/
+  // 403'd on ipfs.io — so the *first* choice has to be the reliable one,
+  // not just a fallback option.
+  const hash = extractIpfsHash(ipfsUrl)
+  if (hash) {
+    const gateway = getPinataConstants()?.PINATA_CONFIG?.IPFS_GATEWAY || "gateway.pinata.cloud"
+    const httpUrl = `https://${gateway}/ipfs/${hash}`
     return proxyIfDiscord(httpUrl)
   }
 
-  // For already-HTTP URLs, proxy in Discord mode
+  // For already-HTTP, non-IPFS URLs, proxy in Discord mode
   return proxyIfDiscord(ipfsUrl)
 }

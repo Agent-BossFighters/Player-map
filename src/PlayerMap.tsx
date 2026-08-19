@@ -16,8 +16,13 @@ const PlayerMap: React.FC<PlayerMapProps> = ({
 
   useEffect(() => {
     if (!getAccessToken || hasFiredSession.current) return
-    hasFiredSession.current = true
-    postSession(getAccessToken)
+    // Lock only once a token actually resolved — getAccessToken() can
+    // transiently return null while host auth is still initializing on
+    // mount; locking unconditionally here would permanently skip the
+    // daily-login session record for that load.
+    postSession(getAccessToken).then((result) => {
+      if (result.ok) hasFiredSession.current = true
+    })
   }, [getAccessToken])
 
   return (
