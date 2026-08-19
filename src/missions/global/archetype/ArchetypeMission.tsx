@@ -107,11 +107,15 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
     return false;
   }, [refetchArchetype]);
 
-  const advanceOrSubmit = useCallback(async () => {
+  // answersOverride lets the auto-advance path (below) pass the
+  // just-clicked answer directly — draft.setAnswer's state update hasn't
+  // propagated yet when the delayed advanceOrSubmit() call fires, so
+  // reading draft.answers here would silently drop that last answer.
+  const advanceOrSubmit = useCallback(async (answersOverride?: typeof draft.answers) => {
     if (isLastStep) {
       setPhase('submitting');
       setRevealError(null);
-      const success = await submit(draft.answers);
+      const success = await submit(answersOverride ?? draft.answers);
       if (success) {
         draft.clear();
         const found = await pollForArchetype();
@@ -130,9 +134,10 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
   }, [isLastStep, submit, draft, pollForArchetype]);
 
   const handleAutoAdvanceAnswer = useCallback((question: ArchetypeQuestion, value: AnswerValue) => {
+    const nextAnswers = { ...draft.answers, [question.id]: value };
     draft.setAnswer(question.id, value);
     setTimeout(() => {
-      advanceOrSubmit();
+      advanceOrSubmit(nextAnswers);
     }, 200);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft, advanceOrSubmit]);
@@ -352,7 +357,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
           <button
             type="button"
             className={styles.nextBtn}
-            onClick={advanceOrSubmit}
+            onClick={() => advanceOrSubmit()}
             disabled={!draft.isStepComplete(draft.currentStepIndex)}
           >
             {isLastStep ? 'Finish' : 'Next ›'}
