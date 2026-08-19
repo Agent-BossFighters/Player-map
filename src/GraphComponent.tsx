@@ -16,6 +16,7 @@ import PlayerMapGraph from "./PlayerMapGraph";
 import { ConnectWalletModal } from "./components/modals";
 import TopNavBar, { RightPanelMode, GraphControls } from "./components/TopNavBar";
 import ArchetypeMission from "./missions/global/archetype/ArchetypeMission";
+import PreferencesMission from "./missions/global/preferences/PreferencesMission";
 import RightPanel from "./components/RightPanel";
 import MissionsSimple from "./components/MissionsSimple";
 import { PlayerMapQueryClientProvider, useQueryClientContext } from "./contexts/QueryClientContext";
@@ -94,16 +95,21 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
     persistedMode === 'profile' || persistedMode === 'speakup' ? persistedMode : 'speakup';
   const [rightPanelMode, setRightPanelMode] = useState<RightPanelMode>(initialPanelMode);
 
-  // ── Quête préférences joueur ──────────────────────────────────────────────────
-  const [archetypeQuestOpen, setArchetypeQuestOpen] = useState(false);
+  // ── Quêtes à modal (archetype, préférences joueur) ────────────────────────────
+  // Which click-to-launch mission's modal is open, if any — mission id is the
+  // key, so adding another click-to-launch mission needs no new state slot,
+  // just another branch below rendering its modal.
+  const [openQuestMissionId, setOpenQuestMissionId] = useState<string | null>(null);
 
-  // Auto-open once for a genuinely first-ever visit (isNewPlayer from POST
-  // /session), same one-shot ref-guard pattern as PlayerMapView's hasFiredSession.
+  // Auto-open archetype once for a genuinely first-ever visit (isNewPlayer
+  // from POST /session), same one-shot ref-guard pattern as PlayerMapView's
+  // hasFiredSession. Preferences has no equivalent auto-open — click-to-launch
+  // only.
   const hasAutoOpenedArchetype = useRef(false);
   useEffect(() => {
     if (!isNewPlayer || hasAutoOpenedArchetype.current) return;
     hasAutoOpenedArchetype.current = true;
-    setArchetypeQuestOpen(true);
+    setOpenQuestMissionId('archetype');
   }, [isNewPlayer]);
 
   // ── Nœud sélectionné ─────────────────────────────────────────────────────────
@@ -319,10 +325,18 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
 
       {/* Mission archétype (global) */}
       <ArchetypeMission
-        isOpen={archetypeQuestOpen}
+        isOpen={openQuestMissionId === 'archetype'}
         walletConnected={walletConnected}
         walletAddress={walletAddress}
-        onClose={() => setArchetypeQuestOpen(false)}
+        onClose={() => setOpenQuestMissionId(null)}
+      />
+
+      {/* Mission préférences joueur (global) */}
+      <PreferencesMission
+        isOpen={openQuestMissionId === 'preferences'}
+        walletConnected={walletConnected}
+        walletAddress={walletAddress}
+        onClose={() => setOpenQuestMissionId(null)}
       />
 
       {/* Home / inscription — wallet non connecté, pas encore de player, ou profil incomplet */}
@@ -359,7 +373,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
             <MissionsSimple
               walletAddress={walletAddress}
               getAccessToken={getAccessToken}
-              onOpenArchetype={() => setArchetypeQuestOpen(true)}
+              onOpenQuestModal={setOpenQuestMissionId}
             />
 
             {/* Graphe — prend tout l'espace restant */}

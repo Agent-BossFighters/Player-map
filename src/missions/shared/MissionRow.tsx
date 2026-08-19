@@ -5,15 +5,18 @@ import ClaimButton from './ClaimButton';
 import LevelBadge from './LevelBadge';
 import styles from './MissionRow.module.css';
 
+// Same set as MissionCard.tsx — missions with their own questionnaire modal.
+const CLICK_TO_LAUNCH_MISSION_IDS = new Set(['archetype', 'preferences']);
+
 interface MissionRowProps {
   mission: Mission;
   status: MissionStatus;
   onClaim: () => void;
-  /** Opens the archetype modal — only invoked for the archetype mission row,
-   * same guard as MissionCard. The modal itself decides what to show (the
-   * questionnaire, or the revealed archetype once completed), so this stays
-   * clickable regardless of claim status. */
-  onOpenArchetype?: () => void;
+  /** Opens the mission's questionnaire modal — invoked with mission.id, only
+   * for missions in CLICK_TO_LAUNCH_MISSION_IDS. Same guard as MissionCard;
+   * the modal itself decides what to show, so this stays clickable
+   * regardless of claim status. */
+  onOpenQuestModal?: (missionId: string) => void;
 }
 
 function rowTitle(mission: Mission): string {
@@ -27,14 +30,14 @@ function rowTitle(mission: Mission): string {
   }
 }
 
-const MissionRow: React.FC<MissionRowProps> = ({ mission, status, onClaim, onOpenArchetype }) => {
-  const isArchetype = mission.id === 'archetype';
+const MissionRow: React.FC<MissionRowProps> = ({ mission, status, onClaim, onOpenQuestModal }) => {
+  const isClickToLaunch = CLICK_TO_LAUNCH_MISSION_IDS.has(mission.id);
 
   return (
     <div
       className={styles.row}
-      onClick={isArchetype ? onOpenArchetype : undefined}
-      style={isArchetype ? { cursor: 'pointer' } : undefined}
+      onClick={isClickToLaunch ? () => onOpenQuestModal?.(mission.id) : undefined}
+      style={isClickToLaunch ? { cursor: 'pointer' } : undefined}
     >
       <span className={styles.title}>{rowTitle(mission)}</span>
 

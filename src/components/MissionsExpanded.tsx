@@ -15,7 +15,7 @@ interface MissionsExpandedProps {
   initialCategory: MissionCategory;
   walletAddress?: string;
   getAccessToken?: () => Promise<string | null>;
-  onOpenArchetype?: () => void;
+  onOpenQuestModal?: (missionId: string) => void;
   onClose: () => void;
 }
 
@@ -30,7 +30,7 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
   initialCategory,
   walletAddress,
   getAccessToken,
-  onOpenArchetype,
+  onOpenQuestModal,
   onClose,
 }) => {
   const { grouped, totalXp, isLoading, error } = useMissions(walletAddress);
@@ -143,7 +143,7 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
                       mission={mission}
                       status={mission.status}
                       onClaim={() => handleClaim(mission)}
-                      onOpenArchetype={onOpenArchetype}
+                      onOpenQuestModal={onOpenQuestModal}
                     />
                     {errorMissionId === mission.id && (
                       <p className={styles.claimError}>{errorMessage}</p>

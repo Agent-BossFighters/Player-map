@@ -6,16 +6,20 @@ import ClaimButton from './ClaimButton';
 import LevelBadge from './LevelBadge';
 import styles from './MissionCard.module.css';
 
+// Missions with their own questionnaire modal, opened by clicking the card
+// itself rather than (or in addition to) the CLAIM button — the modal
+// decides what to show (questionnaire, in-progress, or already-completed),
+// so the card stays clickable regardless of claim status.
+const CLICK_TO_LAUNCH_MISSION_IDS = new Set(['archetype', 'preferences']);
+
 interface MissionCardProps {
   mission: Mission;
   status: MissionStatus;
   onClaim: () => void;
   children?: React.ReactNode;
-  /** Opens the archetype modal. Only ever invoked for the archetype mission
-   * card — see the onClick guard below. The modal itself decides what to
-   * show (questionnaire vs. revealed archetype), so this stays clickable
-   * regardless of claim status. Other mission cards ignore this prop. */
-  onOpenArchetype?: () => void;
+  /** Opens the mission's questionnaire modal — invoked with mission.id, only
+   * for missions in CLICK_TO_LAUNCH_MISSION_IDS. */
+  onOpenQuestModal?: (missionId: string) => void;
 }
 
 function missionHeader(mission: Mission): string {
@@ -29,14 +33,14 @@ function missionHeader(mission: Mission): string {
   }
 }
 
-const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, children, onOpenArchetype }) => {
-  const isArchetype = mission.id === 'archetype';
+const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, children, onOpenQuestModal }) => {
+  const isClickToLaunch = CLICK_TO_LAUNCH_MISSION_IDS.has(mission.id);
 
   return (
     <div
       className={styles.card}
-      onClick={isArchetype ? onOpenArchetype : undefined}
-      style={isArchetype ? { cursor: 'pointer' } : undefined}
+      onClick={isClickToLaunch ? () => onOpenQuestModal?.(mission.id) : undefined}
+      style={isClickToLaunch ? { cursor: 'pointer' } : undefined}
     >
       <div className={styles.header}>
         <span className={styles.title}>{missionHeader(mission)}</span>

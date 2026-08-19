@@ -15,7 +15,7 @@ type MissionCategory = 'daily' | 'global' | 'social';
 interface MissionsSimpleProps {
   walletAddress?: string;
   getAccessToken?: () => Promise<string | null>;
-  onOpenArchetype?: () => void;
+  onOpenQuestModal?: (missionId: string) => void;
 }
 
 interface MissionBlockProps {
@@ -28,7 +28,7 @@ interface MissionBlockProps {
   errorMissionId?: string;
   errorMessage?: string;
   errorIsRateLimit?: boolean;
-  onOpenArchetype?: () => void;
+  onOpenQuestModal?: (missionId: string) => void;
   onSeeMore: (category: MissionCategory) => void;
   streak?: number;
 }
@@ -43,7 +43,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
   errorMissionId,
   errorMessage,
   errorIsRateLimit,
-  onOpenArchetype,
+  onOpenQuestModal,
   onSeeMore,
   streak,
 }) => {
@@ -92,7 +92,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
                 mission={visibleMission}
                 status={visibleMission.status}
                 onClaim={() => onClaim(visibleMission)}
-                onOpenArchetype={onOpenArchetype}
+                onOpenQuestModal={onOpenQuestModal}
               />
               {errorMissionId === visibleMission.id && (
                 <p className={errorIsRateLimit ? styles.claimRateLimit : styles.claimError}>
@@ -118,7 +118,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
   );
 };
 
-const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAccessToken, onOpenArchetype }) => {
+const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAccessToken, onOpenQuestModal }) => {
   const [open, setOpen] = useState<boolean>(() => {
     const stored = localStorage.getItem(PANEL_STORAGE_KEY);
     return stored === null ? true : stored === 'true';
@@ -206,7 +206,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorMissionId={errorMissionId}
                   errorMessage={errorMessage}
                   errorIsRateLimit={errorIsRateLimit}
-                  onOpenArchetype={onOpenArchetype}
+                  onOpenQuestModal={onOpenQuestModal}
                   onSeeMore={handleSeeMore}
                   streak={dailyLoginStreak}
                 />
@@ -220,7 +220,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorMissionId={errorMissionId}
                   errorMessage={errorMessage}
                   errorIsRateLimit={errorIsRateLimit}
-                  onOpenArchetype={onOpenArchetype}
+                  onOpenQuestModal={onOpenQuestModal}
                   onSeeMore={handleSeeMore}
                 />
                 <MissionBlock
@@ -233,7 +233,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorMissionId={errorMissionId}
                   errorMessage={errorMessage}
                   errorIsRateLimit={errorIsRateLimit}
-                  onOpenArchetype={onOpenArchetype}
+                  onOpenQuestModal={onOpenQuestModal}
                   onSeeMore={handleSeeMore}
                 />
               </>
@@ -247,7 +247,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
         initialCategory={expandedCategory}
         walletAddress={walletAddress}
         getAccessToken={getAccessToken}
-        onOpenArchetype={onOpenArchetype}
+        onOpenQuestModal={onOpenQuestModal}
         onClose={() => setExpandedOpen(false)}
       />
     </div>

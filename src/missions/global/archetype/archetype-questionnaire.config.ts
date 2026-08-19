@@ -26,7 +26,23 @@ export interface MultiRatingQuestion {
   options: MultiRatingOption[];
 }
 
-export type ArchetypeQuestion = IntensityForAgainstQuestion | MultiRatingQuestion;
+export interface MultiSelectOption {
+  tripleId: string;
+  label: string;
+}
+
+// Utilisé par le questionnaire "Player Preferences" (player-preferences-
+// questionnaire.config.ts) — cases à cocher, N options sélectionnables
+// indépendamment, pas d'intensité/direction (contrairement aux deux types
+// ci-dessus). Réponse = ensemble de tripleIds cochés, pas un AnswerValue.
+export interface MultiSelectQuestion {
+  type: 'multi_select';
+  id: string;
+  question: string;
+  options: MultiSelectOption[];
+}
+
+export type ArchetypeQuestion = IntensityForAgainstQuestion | MultiRatingQuestion | MultiSelectQuestion;
 
 export interface ArchetypeStep {
   id: string;
