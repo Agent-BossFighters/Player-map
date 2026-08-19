@@ -21,8 +21,13 @@ interface PendingDeposit {
 // Mapping intensité → montant (parseEther, jamais de float direct).
 // intensity_for_against : symétrique for/against. multi_rating for : deux
 // niveaux. multi_rating against : un seul niveau (faible).
+// fort = 0.03 (intensité 3 côté worker, intensityMax 3) — l'écart 1 vs 3
+// entre agree et strongly agree est ce qui permet à un axe de se démarquer ;
+// avec l'ancien 0.02 (intensité 2), "agree partout" atteignait déjà 50% du
+// max sur chaque axe et le classement retombait systématiquement sur
+// versatile.
 const AMOUNT_FAIBLE = parseEther('0.01');
-const AMOUNT_FORT = parseEther('0.02');
+const AMOUNT_FORT = parseEther('0.03');
 
 function isMultiRatingAnswer(value: AnswerValue | MultiRatingAnswer): value is MultiRatingAnswer {
   return !('curve' in value);
