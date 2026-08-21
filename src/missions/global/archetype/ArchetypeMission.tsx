@@ -17,6 +17,7 @@ interface ArchetypeMissionProps {
   walletConnected?: any;
   walletAddress?: string;
   onClose: () => void;
+  getAccessToken?: () => Promise<string | null>;
 }
 
 type FlowPhase = 'intro' | 'steps' | 'submitting' | 'reveal';
@@ -44,6 +45,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
   walletConnected,
   walletAddress,
   onClose,
+  getAccessToken,
 }) => {
   const { completion, isLoading: completionLoading } = useArchetypeCompletion(walletAddress);
 
@@ -198,7 +200,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
   if (completion?.completed) {
     return (
       <div className={styles.overlay}>
-        <ArchetypeBadge address={walletAddress} onClose={onClose} />
+        <ArchetypeBadge address={walletAddress} onClose={onClose} getAccessToken={getAccessToken} />
       </div>
     );
   }

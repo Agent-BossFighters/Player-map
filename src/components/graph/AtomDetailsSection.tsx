@@ -18,6 +18,7 @@ interface AtomDetailsSectionProps {
   showDescription?: boolean;
   placeholderElement?: React.ReactNode;
   actionElement?: React.ReactNode;
+  cosmeticBadge?: { image_url: string; name: string } | null;
 }
 
 const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
@@ -27,6 +28,7 @@ const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
   showDescription = true,
   placeholderElement,
   actionElement,
+  cosmeticBadge,
 }) => {
   const [ipfsMetadata, setIpfsMetadata] = useState<any>(null);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
@@ -182,6 +184,14 @@ const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
                         <strong>{String(atomDetails.label ?? "Not defined")}</strong>
                       </p>
 
+                      {cosmeticBadge && (
+                        <img
+                          src={cosmeticBadge.image_url}
+                          alt={cosmeticBadge.name}
+                          className={styles.cosmeticBadge}
+                        />
+                      )}
+
                       {/* Badge verified avec tooltip */}
                       <div
                         className={styles.badgeWrapper}
@@ -218,6 +228,14 @@ const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
                       <p className={styles.atomName}>
                         <strong>{String(atomDetails.label ?? "Not defined")}</strong>
                       </p>
+
+                      {cosmeticBadge && (
+                        <img
+                          src={cosmeticBadge.image_url}
+                          alt={cosmeticBadge.name}
+                          className={styles.cosmeticBadge}
+                        />
+                      )}
 
                       {/* Badge community avec tooltip */}
                       <div
@@ -268,6 +286,13 @@ const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
                       <p className={styles.atomNameAccent}>
                         <strong>{String(atomDetails.label ?? "Not defined")}</strong>
                       </p>
+                      {cosmeticBadge && (
+                        <img
+                          src={cosmeticBadge.image_url}
+                          alt={cosmeticBadge.name}
+                          className={styles.cosmeticBadge}
+                        />
+                      )}
                       {actionElement}
                     </div>
                     {showDescription && (

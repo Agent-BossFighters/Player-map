@@ -11,6 +11,7 @@ import PositionsSection from "./graph/PositionsSection";
 import ActivitySection from "./graph/ActivitySection";
 import { Network } from "../hooks/useAtomData";
 import { useGameStats } from "../hooks/useGameStats";
+import { usePlayerArchetype } from "../missions/global/archetype/hooks/usePlayerArchetype";
 import tripleSvg from "../assets/img/triple.svg";
 import styles from "./RightPanel.module.css";
 
@@ -200,6 +201,8 @@ const ProfileContent: React.FC<{
   loading,
   error,
 }) => {
+  const { archetype } = usePlayerArchetype(walletAddress);
+
   if (loading) return <p className={styles.stateMessage}>Loading…</p>;
   if (error) return <p className={styles.stateMessageError}>{error}</p>;
   if (!atomDetails)
@@ -249,6 +252,7 @@ const ProfileContent: React.FC<{
         walletAddress={walletAddress}
         showDescription={false}
         placeholderElement={<FaUser size={60} color="#ffd32a" />}
+        cosmeticBadge={archetype?.cosmetics?.[0] ?? null}
       />
       <div className={styles.followStats}>
         <span><strong>{connections.follows.length}</strong> Following</span>
@@ -314,6 +318,8 @@ const OtherPlayerProfileContent: React.FC<{
   currentWalletAddress?: string;
   myPositions?: any[];
 }> = ({ atomDetails, activities, positions = [], walletAddress, connections, loading, error, myAccountAtomId, walletConnected, publicClient, currentWalletAddress, myPositions = [] }) => {
+  const { archetype } = usePlayerArchetype(walletAddress ?? undefined);
+
   if (loading) return <p className={styles.stateMessage}>Loading…</p>;
   if (error) return <p className={styles.stateMessageError}>{error}</p>;
   if (!atomDetails)
@@ -345,6 +351,7 @@ const OtherPlayerProfileContent: React.FC<{
           walletAddress={undefined}
           showDescription={false}
           placeholderElement={<FaUser size={60} color="#ffd32a" />}
+          cosmeticBadge={archetype?.cosmetics?.[0] ?? null}
           actionElement={
             <FollowButton
               walletConnected={walletConnected}

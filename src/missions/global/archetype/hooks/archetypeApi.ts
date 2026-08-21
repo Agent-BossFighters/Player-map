@@ -12,22 +12,29 @@ export interface ArchetypeCompletionResponse {
   missingTripleIds: string[];
 }
 
+export interface ArchetypeBadgeCosmetic {
+  id: string;
+  name: string;
+  image_url: string;
+}
+
 export interface PlayerArchetypeResponse {
   archetype: string;
   label: string;
   description: string;
+  cosmetics: ArchetypeBadgeCosmetic[];
 }
 
 const TOTAL_QUESTIONS = 15;
 
 const MOCK_ARCHETYPES: PlayerArchetypeResponse[] = [
-  { archetype: 'collector', label: 'Le Collectionneur', description: 'Stub description — logique réelle côté worker.' },
-  { archetype: 'strategist', label: 'Le Stratège', description: 'Stub description — logique réelle côté worker.' },
-  { archetype: 'socializer', label: 'Le Sociable', description: 'Stub description — logique réelle côté worker.' },
-  { archetype: 'competitor', label: 'Le Compétiteur', description: 'Stub description — logique réelle côté worker.' },
-  { archetype: 'explorer', label: 'L’Explorateur', description: 'Stub description — logique réelle côté worker.' },
-  { archetype: 'creator', label: 'Le Créateur', description: 'Stub description — logique réelle côté worker.' },
-  { archetype: 'grinder', label: 'Le Bosseur', description: 'Stub description — logique réelle côté worker.' },
+  { archetype: 'collector', label: 'Le Collectionneur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
+  { archetype: 'strategist', label: 'Le Stratège', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
+  { archetype: 'socializer', label: 'Le Sociable', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
+  { archetype: 'competitor', label: 'Le Compétiteur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
+  { archetype: 'explorer', label: 'L’Explorateur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
+  { archetype: 'creator', label: 'Le Créateur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
+  { archetype: 'grinder', label: 'Le Bosseur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
 ];
 
 function hashAddress(address: string): number {

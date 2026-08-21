@@ -329,6 +329,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
         walletConnected={walletConnected}
         walletAddress={walletAddress}
         onClose={() => setOpenQuestMissionId(null)}
+        getAccessToken={getAccessToken}
       />
 
       {/* Mission préférences joueur (global) */}

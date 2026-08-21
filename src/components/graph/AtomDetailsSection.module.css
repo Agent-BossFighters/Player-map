@@ -70,6 +70,13 @@
   cursor: pointer;
 }
 
+.cosmeticBadge {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .tooltip {
   position: absolute;
   top: calc(100% + 8px);
