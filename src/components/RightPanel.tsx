@@ -252,7 +252,11 @@ const ProfileContent: React.FC<{
         walletAddress={walletAddress}
         showDescription={false}
         placeholderElement={<FaUser size={60} color="#ffd32a" />}
-        cosmeticBadge={archetype?.cosmetics?.[0] ?? null}
+        cosmeticBadge={
+          archetype?.cosmetics?.[0]
+            ? { ...archetype.cosmetics[0], description: archetype.description }
+            : null
+        }
       />
       <div className={styles.followStats}>
         <span><strong>{connections.follows.length}</strong> Following</span>
@@ -351,7 +355,11 @@ const OtherPlayerProfileContent: React.FC<{
           walletAddress={undefined}
           showDescription={false}
           placeholderElement={<FaUser size={60} color="#ffd32a" />}
-          cosmeticBadge={archetype?.cosmetics?.[0] ?? null}
+          cosmeticBadge={
+          archetype?.cosmetics?.[0]
+            ? { ...archetype.cosmetics[0], description: archetype.description }
+            : null
+        }
           actionElement={
             <FollowButton
               walletConnected={walletConnected}
