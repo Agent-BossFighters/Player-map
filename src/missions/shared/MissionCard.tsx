@@ -5,6 +5,7 @@ import RewardBadge from './RewardBadge';
 import ClaimButton from './ClaimButton';
 import LevelBadge from './LevelBadge';
 import { usePreferencesMissionProgress } from './usePreferencesMissionProgress';
+import { useArchetypeMissionProgress } from './useArchetypeMissionProgress';
 import styles from './MissionCard.module.css';
 
 // Missions with their own questionnaire modal, opened by clicking the card
@@ -37,7 +38,9 @@ function missionHeader(mission: Mission): string {
 
 const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, children, onOpenQuestModal, walletAddress }) => {
   const isClickToLaunch = CLICK_TO_LAUNCH_MISSION_IDS.has(mission.id);
-  const progressCurrent = usePreferencesMissionProgress(mission, walletAddress);
+  const preferencesProgress = usePreferencesMissionProgress(mission, walletAddress);
+  const archetypeProgress = useArchetypeMissionProgress(mission, walletAddress);
+  const progressCurrent = mission.id === 'archetype' ? archetypeProgress : preferencesProgress;
 
   return (
     <div

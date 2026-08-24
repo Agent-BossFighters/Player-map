@@ -121,6 +121,15 @@ export function useArchetypeDraft(address?: string, visibleTripleIds?: string[])
     [steps, isStepComplete]
   );
 
+  // Mission progress target is a question count (config.triples.length on
+  // the worker side, see computeArchetype.ts), not a step count — a step can
+  // bundle several questions (multi_rating) — so count answered questions
+  // here to stay in the same unit.
+  const answeredQuestionCount = useMemo(
+    () => steps.flatMap(step => step.questions).filter(isQuestionAnswered).length,
+    [steps, isQuestionAnswered]
+  );
+
   const clear = useCallback(() => {
     if (address) localStorage.removeItem(draftKey(address));
     setDraft(createEmptyDraft());
@@ -137,5 +146,6 @@ export function useArchetypeDraft(address?: string, visibleTripleIds?: string[])
     clear,
     isStepComplete,
     isComplete,
+    answeredQuestionCount,
   };
 }

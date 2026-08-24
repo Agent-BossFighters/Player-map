@@ -4,6 +4,7 @@ import ProgressBar from './ProgressBar';
 import ClaimButton from './ClaimButton';
 import LevelBadge from './LevelBadge';
 import { usePreferencesMissionProgress } from './usePreferencesMissionProgress';
+import { useArchetypeMissionProgress } from './useArchetypeMissionProgress';
 import styles from './MissionRow.module.css';
 
 // Same set as MissionCard.tsx — missions with their own questionnaire modal.
@@ -34,7 +35,9 @@ function rowTitle(mission: Mission): string {
 
 const MissionRow: React.FC<MissionRowProps> = ({ mission, status, onClaim, onOpenQuestModal, walletAddress }) => {
   const isClickToLaunch = CLICK_TO_LAUNCH_MISSION_IDS.has(mission.id);
-  const progressCurrent = usePreferencesMissionProgress(mission, walletAddress);
+  const preferencesProgress = usePreferencesMissionProgress(mission, walletAddress);
+  const archetypeProgress = useArchetypeMissionProgress(mission, walletAddress);
+  const progressCurrent = mission.id === 'archetype' ? archetypeProgress : preferencesProgress;
 
   return (
     <div
