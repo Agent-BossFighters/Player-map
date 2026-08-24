@@ -28,13 +28,13 @@ export interface PlayerArchetypeResponse {
 const TOTAL_QUESTIONS = 15;
 
 const MOCK_ARCHETYPES: PlayerArchetypeResponse[] = [
-  { archetype: 'collector', label: 'Le Collectionneur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
-  { archetype: 'strategist', label: 'Le Stratège', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
-  { archetype: 'socializer', label: 'Le Sociable', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
-  { archetype: 'competitor', label: 'Le Compétiteur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
-  { archetype: 'explorer', label: 'L’Explorateur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
-  { archetype: 'creator', label: 'Le Créateur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
-  { archetype: 'grinder', label: 'Le Bosseur', description: 'Stub description — logique réelle côté worker.', cosmetics: [] },
+  { archetype: 'collector', label: 'The Collector', description: 'Stub description — real logic lives on the worker.', cosmetics: [] },
+  { archetype: 'strategist', label: 'The Strategist', description: 'Stub description — real logic lives on the worker.', cosmetics: [] },
+  { archetype: 'socializer', label: 'The Socializer', description: 'Stub description — real logic lives on the worker.', cosmetics: [] },
+  { archetype: 'competitor', label: 'The Competitor', description: 'Stub description — real logic lives on the worker.', cosmetics: [] },
+  { archetype: 'explorer', label: 'The Explorer', description: 'Stub description — real logic lives on the worker.', cosmetics: [] },
+  { archetype: 'creator', label: 'The Creator', description: 'Stub description — real logic lives on the worker.', cosmetics: [] },
+  { archetype: 'grinder', label: 'The Grinder', description: 'Stub description — real logic lives on the worker.', cosmetics: [] },
 ];
 
 function hashAddress(address: string): number {

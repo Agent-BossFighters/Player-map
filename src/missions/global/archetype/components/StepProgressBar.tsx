@@ -29,7 +29,7 @@ const StepProgressBar: React.FC<StepProgressBarProps> = ({
               className={styles.progressStep}
               onClick={() => isReachable && onStepClick(i)}
               disabled={!isReachable}
-              aria-label={`Étape ${i + 1} sur ${totalSteps}`}
+              aria-label={`Step ${i + 1} of ${totalSteps}`}
               aria-current={isActive ? 'step' : undefined}
             >
               <span

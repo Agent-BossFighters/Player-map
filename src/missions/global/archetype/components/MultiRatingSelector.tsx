@@ -9,10 +9,10 @@ interface MultiRatingSelectorProps {
 }
 
 const OPTIONS: Array<{ value: AnswerValue | null; icon: string; label: string }> = [
-  { value: { curve: 'against', intensity: 'faible' }, icon: '👎', label: 'Contre' },
-  { value: null, icon: '—', label: 'Neutre / Sans avis' },
-  { value: { curve: 'for', intensity: 'faible' }, icon: '👍', label: 'Pour' },
-  { value: { curve: 'for', intensity: 'fort' }, icon: '👍👍', label: 'Fortement pour' },
+  { value: { curve: 'against', intensity: 'faible' }, icon: '👎', label: 'Disagree' },
+  { value: null, icon: '—', label: 'Neutral / No opinion' },
+  { value: { curve: 'for', intensity: 'faible' }, icon: '👍', label: 'Agree' },
+  { value: { curve: 'for', intensity: 'fort' }, icon: '👍👍', label: 'Strongly agree' },
 ];
 
 function isSameAnswer(a: AnswerValue | null, b: AnswerValue | null | undefined): boolean {

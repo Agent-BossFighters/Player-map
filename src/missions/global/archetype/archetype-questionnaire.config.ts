@@ -75,7 +75,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q1',
-        question: "J'aime obtenir des objets, skins ou récompenses disponibles.",
+        question: "I like obtaining available items, skins or rewards.",
         tripleId: '0xe913b6591957562e0f7387cc3d6f92f46b3487b75bfe5b463d80957bcf8d4262',
       },
     ],
@@ -86,7 +86,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q2',
-        question: 'Compléter une collection me procure beaucoup de satisfaction.',
+        question: 'Completing a collection gives me a lot of satisfaction.',
         tripleId: '0x23e43b32eeb652392ef148bbc4c4f8ab5f820f1ce78ab20de9d04cb926efb0b5',
       },
     ],
@@ -97,7 +97,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q3',
-        question: 'Je passe du temps à rechercher des objets rares.',
+        question: 'I spend time searching for rare items.',
         tripleId: '0x47f7cf34c6df94c39cb834cf6afc499a57c040821da3466f4e10b5ae8de84345',
       },
     ],
@@ -108,7 +108,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q4',
-        question: "J'aime posséder des objets que peu d'autres joueurs ont.",
+        question: "I like owning items that few other players have.",
         tripleId: '0x19c157d8d874b5262a69ac56f3f219428f73d370c66a6b8aae231e6b48b57b12',
       },
     ],
@@ -119,7 +119,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q5',
-        question: 'Les succès et trophées sont importants pour moi.',
+        question: 'Achievements and trophies are important to me.',
         tripleId: '0xe9ec46fe7df1bf0ab67006e10251b92e05ecc595e990177286c7f31652cd365e',
       },
     ],
@@ -130,7 +130,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q6',
-        question: 'Mon objectif principal est de devenir meilleur que les autres joueurs.',
+        question: 'My main goal is to become better than other players.',
         tripleId: '0x12ee5e28245f200fa46d197e23731de226f616fb7ad268944aab7e98d3145ba7',
       },
     ],
@@ -141,7 +141,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q7',
-        question: "Les classements et rangs m'intéressent beaucoup.",
+        question: "Leaderboards and ranks interest me a lot.",
         tripleId: '0x662b1f8402992fa3e555c6ec4a6e28725e3449fe3b74655e98f62a504f2e11e5',
       },
     ],
@@ -152,7 +152,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q8',
-        question: "Je regarde mes performances pour m'améliorer.",
+        question: "I look at my performance to improve.",
         tripleId: '0x068d361790babdb491c58d67abd82057f42df9d754f4f86867f8afa97cb1f368',
       },
     ],
@@ -163,7 +163,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q9',
-        question: 'La victoire est plus importante que les récompenses obtenues.',
+        question: 'Winning matters more to me than the rewards I get.',
         tripleId: '0xb7fcf5c6f5cb9e132cb71a0350f27ed99c38d23d0bdc08a68650ae739f0a563c',
       },
     ],
@@ -174,7 +174,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q10',
-        question: "J'apprécie les défis difficiles qui testent mes compétences.",
+        question: "I enjoy difficult challenges that test my skills.",
         tripleId: '0x2e68353234931d9d1ebe276756140ad0ebd31e3a256a40e6bc45f80a5327f633',
       },
     ],
@@ -185,7 +185,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q11',
-        question: 'Je joue principalement pour me détendre.',
+        question: 'I mainly play to relax.',
         tripleId: '0x3e1c1336ad5b57d8990f3818f94c4f283ae2f1ae8a2eca9ef3ba1a22b563ece9',
       },
     ],
@@ -196,7 +196,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q12',
-        question: "J'aime recevoir des récompenses régulières pour mon temps de jeu.",
+        question: "I like getting regular rewards for my playtime.",
         tripleId: '0x888d5ea0f1d9d013dc3d0dea2bf031afe9ac654b1fd553294f7ebaf63dc5e54c',
       },
     ],
@@ -207,7 +207,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q13',
-        question: 'Je préfère les objectifs simples et accessibles.',
+        question: 'I prefer simple, accessible goals.',
         tripleId: '0xe55a9cc22d40756f2f14bcaf8cd0f9e0534bf1377b0d621baf1a8ea744d21518',
       },
     ],
@@ -218,7 +218,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q14',
-        question: "J'aime jouer sans pression compétitive.",
+        question: "I like playing without competitive pressure.",
         tripleId: '0xcb93e34854887cf14f1757abc047d5b63cd8a948ab86550af2f9ccfd8594e0de',
       },
     ],
@@ -229,7 +229,7 @@ export const ARCHETYPE_STEPS: ArchetypeStep[] = [
       {
         type: 'intensity_for_against',
         id: 'pref_q15',
-        question: 'Les bonus quotidiens ou événements me motivent à revenir.',
+        question: 'Daily bonuses or events motivate me to come back.',
         tripleId: '0x93d5800e8d6d0fc906efb073f3b49ec48daa052ed45911c8b8ba69ac6cf2fe5c',
       },
     ],

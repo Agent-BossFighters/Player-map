@@ -30,7 +30,7 @@ function missionHeader(mission: Mission): string {
     case 'daily':
       return mission.title;
     case 'global':
-      return `Level ${mission.level} — ${mission.titleType}`;
+      return mission.titleType;
     case 'social':
       return mission.description;
   }

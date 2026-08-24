@@ -10,7 +10,7 @@ interface ArchetypeCardProps {
 const ArchetypeCard: React.FC<ArchetypeCardProps> = ({ archetype, animate = false }) => {
   return (
     <div className={[styles.card, animate ? styles.cardAnimate : ''].join(' ')}>
-      <p className={styles.eyebrow}>Ton archétype</p>
+      <p className={styles.eyebrow}>Your archetype</p>
       <h2 className={styles.title}>
         {animate
           ? archetype.label.split('').map((char, i) => (

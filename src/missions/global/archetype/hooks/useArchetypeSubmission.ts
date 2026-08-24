@@ -119,13 +119,13 @@ export function useArchetypeSubmission({
 
   const submit = async (answers: ArchetypeAnswers): Promise<boolean> => {
     if (!walletConnected || !walletAddress) {
-      setError('Wallet non connecté.');
+      setError('Wallet not connected.');
       return false;
     }
 
     const pending = buildPendingDeposits(answers);
     if (pending.length === 0) {
-      setError('Aucune réponse à soumettre.');
+      setError('No answers to submit.');
       return false;
     }
 
@@ -141,11 +141,11 @@ export function useArchetypeSubmission({
       for (const deposit of pending) {
         const triple = await fetchTripleTermIds(deposit.tripleId, network);
         if (!triple) {
-          throw new Error(`Impossible de résoudre le triple ${deposit.tripleId}`);
+          throw new Error(`Unable to resolve triple ${deposit.tripleId}`);
         }
         const targetId = deposit.curve === 'for' ? triple.term_id : triple.counter_term_id;
         if (!targetId) {
-          throw new Error(`Vault ${deposit.curve} introuvable pour le triple ${deposit.tripleId}`);
+          throw new Error(`${deposit.curve} vault not found for triple ${deposit.tripleId}`);
         }
         termIds.push(targetId as `0x${string}`);
         curveIds.push(1n);
@@ -184,7 +184,7 @@ export function useArchetypeSubmission({
       const msg = err?.shortMessage ?? err?.message ?? String(err);
       const isRejected =
         err?.name === 'UserRejectedRequestError' || msg.toLowerCase().includes('user rejected');
-      setError(isRejected ? 'Transaction annulée.' : msg);
+      setError(isRejected ? 'Transaction cancelled.' : msg);
       return false;
     } finally {
       setIsSubmitting(false);

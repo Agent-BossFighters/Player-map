@@ -4,8 +4,8 @@ import styles from './ArchetypeReveal.module.css';
 import { PlayerArchetypeResponse } from '../hooks/archetypeApi';
 
 const BUILD_UP_MESSAGES = [
-  'Analyse de tes réponses...',
-  'Ton archétype dominant...',
+  'Analyzing your answers...',
+  'Your dominant archetype...',
 ];
 
 interface ArchetypeRevealProps {
@@ -39,7 +39,7 @@ const ArchetypeReveal: React.FC<ArchetypeRevealProps> = ({
       <div className={styles.wrapper}>
         <p className={styles.error}>{submitError}</p>
         <button type="button" className={styles.retryBtn} onClick={onRetry}>
-          Réessayer
+          Retry
         </button>
       </div>
     );

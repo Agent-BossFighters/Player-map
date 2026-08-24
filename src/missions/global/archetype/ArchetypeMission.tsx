@@ -123,7 +123,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
         const found = await pollForArchetype();
         if (!found) {
           setRevealError(
-            "Tes votes sont bien enregistrés on-chain, mais l'analyse prend plus de temps que prévu. Réessaie dans quelques instants."
+            "Your votes are recorded on-chain, but the analysis is taking longer than expected. Try again in a moment."
           );
         }
         setPhase('reveal');
@@ -150,7 +150,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
       const found = await pollForArchetype();
       if (!found) {
         setRevealError(
-          "Tes votes sont bien enregistrés on-chain, mais l'analyse prend plus de temps que prévu. Réessaie dans quelques instants."
+          "Your votes are recorded on-chain, but the analysis is taking longer than expected. Try again in a moment."
         );
       }
       return;
@@ -262,7 +262,7 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
         {isFixingMissing && (
           <p className={styles.missingAnswerNotice}>
             <FaExclamationTriangle className={styles.missingAnswerIcon} />
-            Une de tes réponses n'a pas été prise en compte — réponds à nouveau.
+            One of your answers wasn't recorded — please answer again.
           </p>
         )}
         {currentStep.title && <h2 className={styles.stepTitle}>{currentStep.title}</h2>}
