@@ -5,6 +5,7 @@ import styles from './CheckboxGroup.module.css';
 export interface CheckboxGroupOption {
   tripleId: string;
   label: string;
+  description?: string;
 }
 
 interface CheckboxGroupProps {
@@ -33,7 +34,12 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ options, selected, onTogg
             <span className={styles.box}>
               {isSelected && <FaCheck className={styles.check} />}
             </span>
-            <span className={styles.label}>{option.label}</span>
+            <span className={styles.labelGroup}>
+              <span className={styles.label}>{option.label}</span>
+              {option.description && (
+                <span className={styles.description}>{option.description}</span>
+              )}
+            </span>
           </button>
         );
       })}

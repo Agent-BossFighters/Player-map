@@ -144,6 +144,7 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
                       status={mission.status}
                       onClaim={() => handleClaim(mission)}
                       onOpenQuestModal={onOpenQuestModal}
+                      walletAddress={walletAddress}
                     />
                     {errorMissionId === mission.id && (
                       <p className={styles.claimError}>{errorMessage}</p>

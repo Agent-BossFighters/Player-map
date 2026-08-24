@@ -31,6 +31,7 @@ interface MissionBlockProps {
   onOpenQuestModal?: (missionId: string) => void;
   onSeeMore: (category: MissionCategory) => void;
   streak?: number;
+  walletAddress?: string;
 }
 
 const MissionBlock: React.FC<MissionBlockProps> = ({
@@ -46,6 +47,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
   onOpenQuestModal,
   onSeeMore,
   streak,
+  walletAddress,
 }) => {
   const [expanded, setExpanded] = useState(true);
 
@@ -93,6 +95,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
                 status={visibleMission.status}
                 onClaim={() => onClaim(visibleMission)}
                 onOpenQuestModal={onOpenQuestModal}
+                walletAddress={walletAddress}
               />
               {errorMissionId === visibleMission.id && (
                 <p className={errorIsRateLimit ? styles.claimRateLimit : styles.claimError}>
@@ -209,6 +212,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   onOpenQuestModal={onOpenQuestModal}
                   onSeeMore={handleSeeMore}
                   streak={dailyLoginStreak}
+                  walletAddress={walletAddress}
                 />
                 <MissionBlock
                   title="Global"
@@ -222,6 +226,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   errorIsRateLimit={errorIsRateLimit}
                   onOpenQuestModal={onOpenQuestModal}
                   onSeeMore={handleSeeMore}
+                  walletAddress={walletAddress}
                 />
                 <MissionBlock
                   title="Social"

@@ -4,6 +4,7 @@ import ProgressBar from './ProgressBar';
 import RewardBadge from './RewardBadge';
 import ClaimButton from './ClaimButton';
 import LevelBadge from './LevelBadge';
+import { usePreferencesMissionProgress } from './usePreferencesMissionProgress';
 import styles from './MissionCard.module.css';
 
 // Missions with their own questionnaire modal, opened by clicking the card
@@ -20,6 +21,7 @@ interface MissionCardProps {
   /** Opens the mission's questionnaire modal — invoked with mission.id, only
    * for missions in CLICK_TO_LAUNCH_MISSION_IDS. */
   onOpenQuestModal?: (missionId: string) => void;
+  walletAddress?: string;
 }
 
 function missionHeader(mission: Mission): string {
@@ -33,8 +35,9 @@ function missionHeader(mission: Mission): string {
   }
 }
 
-const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, children, onOpenQuestModal }) => {
+const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, children, onOpenQuestModal, walletAddress }) => {
   const isClickToLaunch = CLICK_TO_LAUNCH_MISSION_IDS.has(mission.id);
+  const progressCurrent = usePreferencesMissionProgress(mission, walletAddress);
 
   return (
     <div
@@ -51,7 +54,7 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, status, onClaim, chi
       </div>
 
       <ProgressBar
-        current={mission.progress.current}
+        current={progressCurrent}
         target={mission.progress.target}
         colorVariant={mission.type}
       />

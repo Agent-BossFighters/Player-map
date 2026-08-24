@@ -53,6 +53,11 @@ export function usePreferencesDraft(address?: string) {
 
   const toggleOption = useCallback((questionId: string, tripleId: string) => {
     setDraft(prev => {
+      const isSingleSelect = PREFERENCE_QUESTIONS.find(q => q.id === questionId)?.singleSelect;
+      if (isSingleSelect) {
+        const alreadySelected = (prev.answers[questionId] ?? [])[0] === tripleId;
+        return { ...prev, answers: { ...prev.answers, [questionId]: alreadySelected ? [] : [tripleId] } };
+      }
       const current = new Set(prev.answers[questionId] ?? []);
       if (current.has(tripleId)) current.delete(tripleId);
       else current.add(tripleId);

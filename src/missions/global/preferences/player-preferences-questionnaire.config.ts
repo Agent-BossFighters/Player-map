@@ -7,6 +7,7 @@ export interface PreferenceQuestionConfig {
   id: string;
   question: string;
   options: MultiSelectOption[];
+  singleSelect?: boolean;
 }
 
 // 7 questions à choix multiple (checkboxes). Chaque option = un triple déjà
@@ -61,16 +62,17 @@ export const PREFERENCE_QUESTIONS: PreferenceQuestionConfig[] = [
   {
     id: 'weeklyPlay',
     question: 'How often do you play?',
+    singleSelect: true,
     options: [
-      { tripleId: '0x18b0069d5f047276b36298917f313d8e1ee44b204145ee88feafdcf81f02a5d8', label: 'Daily' },
-      { tripleId: '0xa86707d331862a691bdd2d8cba845b1551d48594943d7fe9dc2e035ab1571ec4', label: 'Several times a week' },
-      { tripleId: '0x906b7f10112ecf9af220431418726292a34324bca58fe92b1fce153a752a496f', label: 'Weekly' },
-      { tripleId: '0xea742e14a2d4119a1cf0707df47420785c2842e89d06ef087de7317734341b44', label: 'Occasionally' },
+      { tripleId: '0x18b0069d5f047276b36298917f313d8e1ee44b204145ee88feafdcf81f02a5d8', label: 'Daily', description: '5+ days a week' },
+      { tripleId: '0xa86707d331862a691bdd2d8cba845b1551d48594943d7fe9dc2e035ab1571ec4', label: 'Several times a week', description: '3-4 days a week' },
+      { tripleId: '0x906b7f10112ecf9af220431418726292a34324bca58fe92b1fce153a752a496f', label: 'Weekly', description: '1-2 days a week' },
+      { tripleId: '0xea742e14a2d4119a1cf0707df47420785c2842e89d06ef087de7317734341b44', label: 'Occasionally', description: 'Less than once a week' },
     ],
   },
   {
     id: 'valuesInGame',
-    question: 'What do you value most in a game?',
+    question: 'What type of in-game assets do you value most?',
     options: [
       { tripleId: '0xb7a0d4b552ce9d0dbce62fa8d09ae29f9aab4ed8624f2a05b3818a9b76d03a77', label: 'Power assets' },
       { tripleId: '0x6b1b966c265eea0e4a70b1abe492cde84c442f0c6ff9579e0b85597b8f93e594', label: 'Cosmetic assets' },

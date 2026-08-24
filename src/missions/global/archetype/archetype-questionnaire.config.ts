@@ -29,6 +29,7 @@ export interface MultiRatingQuestion {
 export interface MultiSelectOption {
   tripleId: string;
   label: string;
+  description?: string;
 }
 
 // Utilisé par le questionnaire "Player Preferences" (player-preferences-

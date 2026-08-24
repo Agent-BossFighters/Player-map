@@ -3,6 +3,7 @@ import type { Mission, MissionStatus } from '../../types/Missions';
 import ProgressBar from './ProgressBar';
 import ClaimButton from './ClaimButton';
 import LevelBadge from './LevelBadge';
+import { usePreferencesMissionProgress } from './usePreferencesMissionProgress';
 import styles from './MissionRow.module.css';
 
 // Same set as MissionCard.tsx — missions with their own questionnaire modal.
@@ -17,6 +18,7 @@ interface MissionRowProps {
    * the modal itself decides what to show, so this stays clickable
    * regardless of claim status. */
   onOpenQuestModal?: (missionId: string) => void;
+  walletAddress?: string;
 }
 
 function rowTitle(mission: Mission): string {
@@ -30,8 +32,9 @@ function rowTitle(mission: Mission): string {
   }
 }
 
-const MissionRow: React.FC<MissionRowProps> = ({ mission, status, onClaim, onOpenQuestModal }) => {
+const MissionRow: React.FC<MissionRowProps> = ({ mission, status, onClaim, onOpenQuestModal, walletAddress }) => {
   const isClickToLaunch = CLICK_TO_LAUNCH_MISSION_IDS.has(mission.id);
+  const progressCurrent = usePreferencesMissionProgress(mission, walletAddress);
 
   return (
     <div
@@ -43,7 +46,7 @@ const MissionRow: React.FC<MissionRowProps> = ({ mission, status, onClaim, onOpe
 
       <div className={styles.progressSlot}>
         <ProgressBar
-          current={mission.progress.current}
+          current={progressCurrent}
           target={mission.progress.target}
           colorVariant={mission.type}
         />
