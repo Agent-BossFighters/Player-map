@@ -70,6 +70,72 @@
   cursor: pointer;
 }
 
+.cosmeticBadgeWrapper {
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.cosmeticBadge {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.cosmeticModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.cosmeticModalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(20, 20, 20, 0.95);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 90vw;
+}
+
+.cosmeticModalImage {
+  width: 250px;
+  height: 250px;
+  object-fit: contain;
+}
+
+.cosmeticModalName {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.cosmeticModalDescription {
+  color: #ccc;
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 320px;
+  margin: 0;
+}
+
+.cosmeticModalClose {
+  margin-top: 4px;
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--color-primary);
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .tooltip {
   position: absolute;
   top: calc(100% + 8px);

@@ -15,7 +15,10 @@ import PlayerMapHome from "./PlayerMapHome";
 import PlayerMapGraph from "./PlayerMapGraph";
 import { ConnectWalletModal } from "./components/modals";
 import TopNavBar, { RightPanelMode, GraphControls } from "./components/TopNavBar";
+import ArchetypeMission from "./missions/global/archetype/ArchetypeMission";
+import PreferencesMission from "./missions/global/preferences/PreferencesMission";
 import RightPanel from "./components/RightPanel";
+import MissionsSimple from "./components/MissionsSimple";
 import { PlayerMapQueryClientProvider, useQueryClientContext } from "./contexts/QueryClientContext";
 import { useGameContext } from "./contexts/GameContext";
 import { PREDICATES } from "./utils/constants";
@@ -34,6 +37,14 @@ interface GraphComponentProps {
   onCreatePlayer?: () => void;
   onConnectWallet?: () => void;
   initialProfile?: string;
+  /** Host-supplied token getter (e.g. Privy's getAccessToken) — used by the
+   * missions panel to authenticate claim requests. Omit if the host has no
+   * auth; claiming is simply unavailable in that case. */
+  getAccessToken?: () => Promise<string | null>;
+  /** True once, right after the host's POST /session call resolves with
+   * isNewPlayer: true — auto-opens the archetype questionnaire for a
+   * genuinely first-ever visit. Omit or leave false/undefined otherwise. */
+  isNewPlayer?: boolean;
 }
 
 const GraphComponentInner: React.FC<GraphComponentProps> = ({
@@ -44,6 +55,8 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
   onClose,
   onCreatePlayer,
   onConnectWallet,
+  getAccessToken,
+  isNewPlayer,
 }) => {
   // ── Init ──────────────────────────────────────────────────────────────────────
   useEffect(() => { initGraphql(); }, []);
@@ -81,6 +94,23 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
   const initialPanelMode: RightPanelMode =
     persistedMode === 'profile' || persistedMode === 'speakup' ? persistedMode : 'speakup';
   const [rightPanelMode, setRightPanelMode] = useState<RightPanelMode>(initialPanelMode);
+
+  // ── Quêtes à modal (archetype, préférences joueur) ────────────────────────────
+  // Which click-to-launch mission's modal is open, if any — mission id is the
+  // key, so adding another click-to-launch mission needs no new state slot,
+  // just another branch below rendering its modal.
+  const [openQuestMissionId, setOpenQuestMissionId] = useState<string | null>(null);
+
+  // Auto-open archetype once for a genuinely first-ever visit (isNewPlayer
+  // from POST /session), same one-shot ref-guard pattern as PlayerMapView's
+  // hasFiredSession. Preferences has no equivalent auto-open — click-to-launch
+  // only.
+  const hasAutoOpenedArchetype = useRef(false);
+  useEffect(() => {
+    if (!isNewPlayer || hasAutoOpenedArchetype.current) return;
+    hasAutoOpenedArchetype.current = true;
+    setOpenQuestMissionId('archetype');
+  }, [isNewPlayer]);
 
   // ── Nœud sélectionné ─────────────────────────────────────────────────────────
   const [selectedNode, setSelectedNode] = useState<any>(null);
@@ -266,7 +296,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
     );
   }
 
-  // ── Chargement game context ───────────────────────────────────────────────────
+  // ── Loading game context ────────────────────────────────────────────────────
   if (gameLoading && !activeGame) {
     return (
       <div className={styles.errorContainer}>
@@ -276,7 +306,7 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
     );
   }
 
-  // ── Chargement ────────────────────────────────────────────────────────────────
+  // ── Loading ──────────────────────────────────────────────────────────────────
   if (isLoading || isProfileLoading) {
     return (
       <div className={styles.errorContainer}>
@@ -292,6 +322,23 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
 
       {/* Modal connexion wallet */}
       <ConnectWalletModal isOpen={!isWalletReady} onConnectWallet={handleConnectWallet} />
+
+      {/* Mission archétype (global) */}
+      <ArchetypeMission
+        isOpen={openQuestMissionId === 'archetype'}
+        walletConnected={walletConnected}
+        walletAddress={walletAddress}
+        onClose={() => setOpenQuestMissionId(null)}
+        getAccessToken={getAccessToken}
+      />
+
+      {/* Mission préférences joueur (global) */}
+      <PreferencesMission
+        isOpen={openQuestMissionId === 'preferences'}
+        walletConnected={walletConnected}
+        walletAddress={walletAddress}
+        onClose={() => setOpenQuestMissionId(null)}
+      />
 
       {/* Home / inscription — wallet non connecté, pas encore de player, ou profil incomplet */}
       {(!isWalletReady || (isWalletReady && !canAccessMap)) && (
@@ -321,8 +368,15 @@ const GraphComponentInner: React.FC<GraphComponentProps> = ({
             myAtomDetails={myAtomDetails}
           />
 
-          {/* Corps : graphe (gauche) + panneau droit */}
+          {/* Corps : missions (gauche) + graphe + panneau droit */}
           <div className={styles.body}>
+            {/* Panneau missions — retractable, largeur variable */}
+            <MissionsSimple
+              walletAddress={walletAddress}
+              getAccessToken={getAccessToken}
+              onOpenQuestModal={setOpenQuestMissionId}
+            />
+
             {/* Graphe — prend tout l'espace restant */}
             <div className={styles.graphPane}>
               <PlayerMapGraph

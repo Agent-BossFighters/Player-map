@@ -1,0 +1,72 @@
+@import "../../../../styles/variables.css";
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background-color: #1e1e30;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #ddd;
+  font-size: 0.9em;
+  text-align: left;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.option:hover {
+  border-color: #666;
+}
+
+.optionSelected {
+  border-color: var(--color-primary);
+  background-color: #2a2510;
+  color: #fff;
+}
+
+.box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #111;
+}
+
+.optionSelected .box {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+}
+
+.check {
+  width: 12px;
+  height: 12px;
+  color: #111;
+}
+
+.labelGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  flex: 1;
+}
+
+.description {
+  font-size: 0.78em;
+  color: #999;
+}

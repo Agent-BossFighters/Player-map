@@ -18,7 +18,47 @@ interface AtomDetailsSectionProps {
   showDescription?: boolean;
   placeholderElement?: React.ReactNode;
   actionElement?: React.ReactNode;
+  cosmeticBadge?: { image_url: string; name: string; description: string } | null;
 }
+
+const CosmeticBadgeDisplay: React.FC<{
+  badge: { image_url: string; name: string; description: string };
+}> = ({ badge }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  return (
+    <>
+      <div
+        className={styles.cosmeticBadgeWrapper}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        onClick={() => setShowModal(true)}
+      >
+        <img src={badge.image_url} alt={badge.name} className={styles.cosmeticBadge} />
+        {showTooltip && (
+          <div className={`${styles.tooltip} ${styles.tooltipWide}`}>
+            <strong>{badge.name}</strong>
+            <div>{badge.description}</div>
+            <div className={styles.tooltipArrow} />
+          </div>
+        )}
+      </div>
+      {showModal && (
+        <div className={styles.cosmeticModalOverlay} onClick={() => setShowModal(false)}>
+          <div className={styles.cosmeticModalContent} onClick={(e) => e.stopPropagation()}>
+            <img src={badge.image_url} alt={badge.name} className={styles.cosmeticModalImage} />
+            <p className={styles.cosmeticModalName}>{badge.name}</p>
+            <p className={styles.cosmeticModalDescription}>{badge.description}</p>
+            <button type="button" className={styles.cosmeticModalClose} onClick={() => setShowModal(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
 
 const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
   atomDetails,
@@ -27,6 +67,7 @@ const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
   showDescription = true,
   placeholderElement,
   actionElement,
+  cosmeticBadge,
 }) => {
   const [ipfsMetadata, setIpfsMetadata] = useState<any>(null);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
@@ -182,6 +223,8 @@ const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
                         <strong>{String(atomDetails.label ?? "Not defined")}</strong>
                       </p>
 
+                      {cosmeticBadge && <CosmeticBadgeDisplay badge={cosmeticBadge} />}
+
                       {/* Badge verified avec tooltip */}
                       <div
                         className={styles.badgeWrapper}
@@ -218,6 +261,8 @@ const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
                       <p className={styles.atomName}>
                         <strong>{String(atomDetails.label ?? "Not defined")}</strong>
                       </p>
+
+                      {cosmeticBadge && <CosmeticBadgeDisplay badge={cosmeticBadge} />}
 
                       {/* Badge community avec tooltip */}
                       <div
@@ -268,6 +313,7 @@ const AtomDetailsSection: React.FC<AtomDetailsSectionProps> = ({
                       <p className={styles.atomNameAccent}>
                         <strong>{String(atomDetails.label ?? "Not defined")}</strong>
                       </p>
+                      {cosmeticBadge && <CosmeticBadgeDisplay badge={cosmeticBadge} />}
                       {actionElement}
                     </div>
                     {showDescription && (

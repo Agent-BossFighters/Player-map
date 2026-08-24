@@ -1,0 +1,42 @@
+@import "../../styles/variables.css";
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  color: var(--color-secondary);
+  font-weight: bold;
+  font-size: 0.92em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progressSlot {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.claimSlot {
+  flex-shrink: 0;
+  min-width: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.xp {
+  flex-shrink: 0;
+  width: 60px;
+  text-align: right;
+  color: var(--color-secondary);
+  font-weight: bold;
+  font-size: 0.85em;
+}

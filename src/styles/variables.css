@@ -3,6 +3,9 @@
   --color-secondary: #ffffff;
   --color-background-primary: #000000;
   --color-background-secondary: rgba(255, 255, 255, 0.03);
+  --color-daily: #2dd4bf;
+  --color-global: #3b82f6;
+  --color-social: #f97316;
 }
 
 button {

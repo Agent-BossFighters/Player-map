@@ -1,0 +1,269 @@
+@import "../styles/variables.css";
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  /* Above Graph2D/Graph3D's legend (z-index 2000). Strictly below
+     ArchetypeMission's overlay (3100) — that modal opens from within this
+     popup and must paint over it. */
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.popup {
+  width: min(94vw, 980px);
+  height: min(86vh, 680px);
+  display: flex;
+  flex-direction: column;
+  background-color: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  background-color: #000000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.headerTitle {
+  color: var(--color-primary);
+  font-size: 1.3em;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.headerXp {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--color-background-secondary);
+  border: 1px solid rgba(255, 211, 42, 0.4);
+  color: var(--color-primary);
+  font-weight: bold;
+  font-size: 1em;
+  padding: 8px 18px;
+  border-radius: 8px;
+}
+
+.closeBtn {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #444;
+  border-radius: 50%;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+}
+
+.closeBtn svg {
+  flex-shrink: 0;
+}
+
+.closeBtn:hover {
+  color: #fff;
+  border-color: #666;
+}
+
+.status {
+  color: #aaa;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 20px;
+  padding: 20px 28px;
+}
+
+.categoryColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 220px;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.categoryCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background-color: var(--color-background-secondary);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.categoryCardActive {
+  border-color: var(--color-primary);
+  background-color: rgba(255, 211, 42, 0.08);
+}
+
+.categoryCardTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.categoryIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.categoryIconSvg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.categoryTitle {
+  color: var(--color-secondary);
+  font-weight: bold;
+  font-size: 0.92em;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  flex: 1;
+}
+
+.categoryXp {
+  color: var(--color-primary);
+  font-weight: bold;
+  font-size: 0.78em;
+}
+
+.streakBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #f59e0b;
+  font-weight: bold;
+  font-size: 0.78em;
+}
+
+.streakIcon {
+  flex-shrink: 0;
+  font-size: 0.9em;
+}
+
+.missionColumn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 18px;
+  min-height: 0;
+}
+
+.missionColumnHeader {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.missionColumnIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.missionColumnIconSvg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.missionColumnTitle {
+  color: var(--color-secondary);
+  font-weight: bold;
+  font-size: 1.05em;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.missionColumnXp {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--color-background-secondary);
+  border: 1px solid rgba(255, 211, 42, 0.4);
+  color: var(--color-primary);
+  font-weight: bold;
+  font-size: 0.85em;
+  padding: 5px 14px;
+  border-radius: 8px;
+}
+
+.missionList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+}
+
+.missionList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.missionList::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+.emptyState {
+  color: #666;
+  font-size: 0.85em;
+  font-style: italic;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.claimError {
+  color: #ef4444;
+  font-size: 0.8em;
+  margin-top: 4px;
+  padding-left: 18px;
+}

@@ -1,0 +1,86 @@
+@import "../../../../styles/variables.css";
+
+.group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.groupCompact {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 110px;
+  padding: 18px 16px;
+  background-color: #1e1e30;
+  border: 1px solid #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.iconGroup {
+  display: flex;
+  gap: 10px;
+}
+
+.icon {
+  width: 26px;
+  height: 26px;
+}
+
+.label {
+  color: #aaa;
+  font-size: 0.72em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-align: center;
+}
+
+.btnSelected .label {
+  color: var(--color-primary);
+}
+
+.groupCompact .btn {
+  min-width: 44px;
+  padding: 8px 10px;
+}
+
+.groupCompact .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.btn:hover {
+  border-color: #666;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.btnSelected {
+  border-color: var(--color-primary);
+  background-color: #2a2510;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
