@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import CheckboxGroup from './components/CheckboxGroup';
 import { usePreferencesCompletion } from './hooks/usePreferencesCompletion';
@@ -14,13 +14,29 @@ interface PreferencesMissionProps {
   onClose: () => void;
 }
 
-type FlowPhase = 'steps' | 'submitting' | 'done';
+type FlowPhase = 'intro' | 'steps' | 'submitting' | 'done';
+
+const introSeenKey = (address: string): string => `playermap:preferences-intro-seen:${address}`;
+
+function hasSeenIntro(address: string): boolean {
+  try {
+    return localStorage.getItem(introSeenKey(address)) !== null;
+  } catch {
+    return true; // localStorage unavailable — don't block the flow on the intro
+  }
+}
+
+function markIntroSeen(address: string): void {
+  try {
+    localStorage.setItem(introSeenKey(address), 'true');
+  } catch {
+    // best-effort — a failed write just means the intro may reappear once
+  }
+}
 
 // Simpler sibling of ArchetypeMission.tsx: one question type (checkboxes),
-// no intensity/direction, no intro screen (click-to-launch is an explicit
-// user action here, not auto-triggered onboarding), no archetype-style
-// reveal — just confirm the questionnaire is saved so the user can go claim
-// it from the mission card.
+// no intensity/direction, no archetype-style reveal — just confirm the
+// questionnaire is saved so the user can go claim it from the mission card.
 const PreferencesMission: React.FC<PreferencesMissionProps> = ({
   isOpen,
   walletConnected,
@@ -31,6 +47,21 @@ const PreferencesMission: React.FC<PreferencesMissionProps> = ({
     usePreferencesCompletion(walletAddress);
 
   const [phase, setPhase] = useState<FlowPhase>('steps');
+
+  // Same one-shot intro-vs-steps decision as ArchetypeMission.tsx — runs
+  // once the modal is actually open with a known walletAddress, and reads/
+  // marks "seen" before usePreferencesDraft mounts below (that hook writes
+  // an empty draft to localStorage on its own first effect).
+  const introDecidedRef = useRef(false);
+  useEffect(() => {
+    if (introDecidedRef.current || !isOpen || !walletAddress) return;
+    introDecidedRef.current = true;
+    if (!hasSeenIntro(walletAddress)) {
+      markIntroSeen(walletAddress);
+      setPhase('intro');
+    }
+  }, [isOpen, walletAddress]);
+
   const draft = usePreferencesDraft(walletAddress);
   const { submit, isSubmitting, error: submitError } = usePreferencesSubmission({
     walletConnected,
@@ -97,6 +128,31 @@ const PreferencesMission: React.FC<PreferencesMissionProps> = ({
           <FaTimes style={{ width: 14, height: 14, flexShrink: 0 }} />
         </button>
         <p className={styles.loadingText}>Loading...</p>
+      </div>
+    );
+  }
+
+  if (phase === 'intro') {
+    return (
+      <div className={styles.overlay}>
+        <div className={styles.introContent}>
+          <div className={styles.introBlock}>
+            {/* TODO: swap in the real preferences-intro artwork once available (mirrors archetype-agent.png) */}
+            <div className={styles.introImagePlaceholder} aria-hidden="true" />
+            <p className={styles.introText}>
+              Tell us how you like to play: this will allow us to personalize your experience on
+              the Player Map.
+            </p>
+          </div>
+        </div>
+        <div className={styles.navRow}>
+          <button type="button" className={styles.prevBtn} onClick={onClose}>
+            Later
+          </button>
+          <button type="button" className={styles.nextBtn} onClick={() => setPhase('steps')}>
+            Start
+          </button>
+        </div>
       </div>
     );
   }
