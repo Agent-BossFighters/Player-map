@@ -39,3 +39,15 @@ export interface SocialMission extends BaseMission {
 }
 
 export type Mission = DailyMission | GlobalMission | SocialMission
+
+// GET /missions response shape — worker-internal documentation only. Mirror
+// of playermap-dashboard/packages/worker/src/types/missions.ts's
+// MissionsResponse (that file has the full "keep in sync manually" note).
+export interface MissionsResponse {
+  missions: Mission[]
+  totalXp: number
+  // Cumulative XP actually earned per category (all-time, across every
+  // cycle for repeating/daily missions) — distinct from summing reward.xp
+  // over `missions`, which only reflects the current cycle's potential.
+  categoryXp: { daily: number; global: number; social: number }
+}

@@ -33,7 +33,7 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
   onOpenQuestModal,
   onClose,
 }) => {
-  const { grouped, totalXp, isLoading, error } = useMissions(walletAddress);
+  const { grouped, totalXp, categoryXp, isLoading, error } = useMissions(walletAddress);
   const claimMutation = useClaimMission({ address: walletAddress, getAccessToken });
 
   const [activeCategory, setActiveCategory] = useState<MissionCategory>(initialCategory);
@@ -64,7 +64,7 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
 
   const activeMissions = grouped[activeCategory];
   const activeCategoryMeta = CATEGORIES.find((c) => c.key === activeCategory)!;
-  const activeCategoryXp = activeMissions.reduce((sum, m) => sum + m.reward.xp, 0);
+  const activeCategoryXp = categoryXp[activeCategory];
   const ActiveIcon = activeCategoryMeta.icon;
 
   return (
@@ -88,7 +88,6 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
             <div className={styles.categoryColumn}>
               {CATEGORIES.map(({ key, title, icon: Icon }) => {
                 const missions = grouped[key];
-                const categoryXp = missions.reduce((sum, m) => sum + m.reward.xp, 0);
                 const claimedCount = missions.filter((m) => m.status === 'claimed').length;
                 const isActive = key === activeCategory;
 
@@ -127,7 +126,7 @@ const MissionsExpanded: React.FC<MissionsExpandedProps> = ({
                     <FaFire className={styles.streakIcon} /> {dailyLoginStreak}
                   </span>
                 )}
-                <span className={styles.missionColumnXp}>{activeCategoryXp} PX</span>
+                <span className={styles.missionColumnXp}>{activeCategoryXp} XP</span>
               </div>
 
               <div className={styles.missionList}>
