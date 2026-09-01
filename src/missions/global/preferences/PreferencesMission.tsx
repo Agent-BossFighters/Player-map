@@ -48,18 +48,24 @@ const PreferencesMission: React.FC<PreferencesMissionProps> = ({
 
   const [phase, setPhase] = useState<FlowPhase>('steps');
 
-  // Same one-shot intro-vs-steps decision as ArchetypeMission.tsx — runs
-  // once the modal is actually open with a known walletAddress, and reads/
-  // marks "seen" before usePreferencesDraft mounts below (that hook writes
-  // an empty draft to localStorage on its own first effect).
-  const introDecidedRef = useRef(false);
+  // Same per-open intro-vs-steps decision as ArchetypeMission.tsx — this
+  // component stays mounted and toggles isOpen, so "seen" must be
+  // re-evaluated every time the mission is (re)launched, not just once per
+  // mount. "Seen" is only persisted when the user clicks Start (see below)
+  // — clicking Later leaves it unmarked, so the intro reappears next
+  // launch. Guarded against re-deciding while already 'submitting'/'done'
+  // so closing mid-submit and reopening doesn't clobber that state.
+  const introDecidedForThisOpenRef = useRef(false);
   useEffect(() => {
-    if (introDecidedRef.current || !isOpen || !walletAddress) return;
-    introDecidedRef.current = true;
-    if (!hasSeenIntro(walletAddress)) {
-      markIntroSeen(walletAddress);
-      setPhase('intro');
+    if (!isOpen) {
+      introDecidedForThisOpenRef.current = false;
+      return;
     }
+    if (introDecidedForThisOpenRef.current || !walletAddress) return;
+    introDecidedForThisOpenRef.current = true;
+    if (phase === 'submitting' || phase === 'done') return;
+    setPhase(hasSeenIntro(walletAddress) ? 'steps' : 'intro');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, walletAddress]);
 
   const draft = usePreferencesDraft(walletAddress);
@@ -149,7 +155,14 @@ const PreferencesMission: React.FC<PreferencesMissionProps> = ({
           <button type="button" className={styles.prevBtn} onClick={onClose}>
             Later
           </button>
-          <button type="button" className={styles.nextBtn} onClick={() => setPhase('steps')}>
+          <button
+            type="button"
+            className={styles.nextBtn}
+            onClick={() => {
+              if (walletAddress) markIntroSeen(walletAddress);
+              setPhase('steps');
+            }}
+          >
             Start
           </button>
         </div>

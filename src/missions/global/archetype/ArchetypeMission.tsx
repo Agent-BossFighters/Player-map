@@ -51,23 +51,25 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
 
   const [phase, setPhase] = useState<FlowPhase>('steps');
 
-  // One-shot: decide intro-vs-steps the first time the modal is actually
-  // open with a known walletAddress (not at raw component mount — this
-  // component stays mounted with isOpen=false before wallet connects, and
-  // waiting avoids deciding on a still-empty address). Read/mark "seen"
-  // here, before useArchetypeDraft mounts below — that hook writes an empty
-  // draft to localStorage on its own first effect, which would make a
-  // later "does a draft exist" check useless as a first-visit signal.
-  // Runs only once per mount, so reopening later (e.g. mid-'reveal') never
-  // resets phase back to 'intro'/'steps'.
-  const introDecidedRef = useRef(false);
+  // Decide intro-vs-steps once per open (not once per mount — this
+  // component stays mounted and toggles isOpen, so "seen" must be
+  // re-evaluated every time the mission is (re)launched). "Seen" is only
+  // persisted when the user actually clicks Start (see below) — clicking
+  // Later leaves it unmarked, so the intro reappears next launch. Guarded
+  // against re-deciding while already in 'submitting'/'reveal' so closing
+  // mid-reveal (e.g. to wait out subgraph indexing lag) and reopening
+  // doesn't clobber that in-flight state back to 'intro'/'steps'.
+  const introDecidedForThisOpenRef = useRef(false);
   useEffect(() => {
-    if (introDecidedRef.current || !isOpen || !walletAddress) return;
-    introDecidedRef.current = true;
-    if (!hasSeenIntro(walletAddress)) {
-      markIntroSeen(walletAddress);
-      setPhase('intro');
+    if (!isOpen) {
+      introDecidedForThisOpenRef.current = false;
+      return;
     }
+    if (introDecidedForThisOpenRef.current || !walletAddress) return;
+    introDecidedForThisOpenRef.current = true;
+    if (phase === 'submitting' || phase === 'reveal') return;
+    setPhase(hasSeenIntro(walletAddress) ? 'steps' : 'intro');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, walletAddress]);
 
   // Partial completion (some questions voted on-chain, but not all) — only
@@ -189,7 +191,14 @@ const ArchetypeMission: React.FC<ArchetypeMissionProps> = ({
           <button type="button" className={styles.prevBtn} onClick={onClose}>
             Later
           </button>
-          <button type="button" className={styles.nextBtn} onClick={() => setPhase('steps')}>
+          <button
+            type="button"
+            className={styles.nextBtn}
+            onClick={() => {
+              if (walletAddress) markIntroSeen(walletAddress);
+              setPhase('steps');
+            }}
+          >
             Start
           </button>
         </div>
