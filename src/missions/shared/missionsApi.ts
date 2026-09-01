@@ -1,10 +1,7 @@
 import { workerUrl } from '../../lib/workerClient';
-import type { Mission } from '../../types/Missions';
+import type { MissionsResponse } from '../../types/Missions';
 
-export interface MissionsResponse {
-  missions: Mission[];
-  totalXp: number;
-}
+export type { MissionsResponse };
 
 export async function fetchMissions(address: string): Promise<MissionsResponse> {
   const response = await fetch(workerUrl(`/api/player/${address}/missions`));

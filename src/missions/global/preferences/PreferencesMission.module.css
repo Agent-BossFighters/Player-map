@@ -100,6 +100,46 @@
   transition: width 0.2s ease;
 }
 
+/* ── Intro screen ──────────────────────────────────────────────────────── */
+
+.introContent {
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  min-height: 0;
+}
+
+.introBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.introImagePlaceholder {
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 16 / 9;
+  border: 1px dashed #444;
+  border-radius: 8px;
+  background-color: #1a1a26;
+}
+
+.introText {
+  color: #fff;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.35;
+  max-width: 540px;
+}
+
 .stepContent {
   flex: 0 1 auto;
   display: flex;

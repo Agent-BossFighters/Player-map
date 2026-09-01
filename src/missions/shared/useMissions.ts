@@ -28,6 +28,7 @@ export function useMissions(address?: string) {
   return {
     grouped,
     totalXp: data?.totalXp ?? 0,
+    categoryXp: data?.categoryXp ?? { daily: 0, global: 0, social: 0 },
     isLoading,
     error: error as Error | null,
     refetch,

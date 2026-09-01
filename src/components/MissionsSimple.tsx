@@ -22,6 +22,7 @@ interface MissionBlockProps {
   title: string;
   colorVariant: MissionCategory;
   missions: Mission[];
+  earnedXp: number;
   emptyLabel: string;
   onClaim: (mission: Mission) => void;
   pendingMissionId?: string;
@@ -38,6 +39,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
   title,
   colorVariant,
   missions,
+  earnedXp,
   emptyLabel,
   onClaim,
   pendingMissionId,
@@ -55,7 +57,6 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
   // order), or the last one (claimed, greyed) if the whole group is done —
   // never an empty block when missions actually exist.
   const visibleMission = missions.length === 0 ? undefined : (missions.find((m) => m.status !== 'claimed') ?? missions[missions.length - 1]);
-  const categoryXp = missions.reduce((sum, m) => sum + m.reward.xp, 0);
 
   return (
     <div className={styles.block}>
@@ -75,7 +76,7 @@ const MissionBlock: React.FC<MissionBlockProps> = ({
               <FaFire className={styles.streakIcon} /> {streak}
             </span>
           )}
-          <span className={styles.blockXp}>{categoryXp} PX</span>
+          <span className={styles.blockXp}>{earnedXp} XP</span>
           <FaChevronDown
             className={[styles.chevron, expanded ? styles.chevronOpen : ''].join(' ')}
           />
@@ -127,7 +128,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
     return stored === null ? true : stored === 'true';
   });
 
-  const { grouped, totalXp, isLoading, error } = useMissions(walletAddress);
+  const { grouped, totalXp, categoryXp, isLoading, error } = useMissions(walletAddress);
   const claimMutation = useClaimMission({ address: walletAddress, getAccessToken });
 
   const [expandedOpen, setExpandedOpen] = useState(false);
@@ -203,6 +204,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   title="Daily"
                   colorVariant="daily"
                   missions={grouped.daily}
+                  earnedXp={categoryXp.daily}
                   emptyLabel="No daily mission right now."
                   onClaim={handleClaim}
                   pendingMissionId={pendingMissionId}
@@ -218,6 +220,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   title="Global"
                   colorVariant="global"
                   missions={grouped.global}
+                  earnedXp={categoryXp.global}
                   emptyLabel="No global mission right now."
                   onClaim={handleClaim}
                   pendingMissionId={pendingMissionId}
@@ -232,6 +235,7 @@ const MissionsSimple: React.FC<MissionsSimpleProps> = ({ walletAddress, getAcces
                   title="Social"
                   colorVariant="social"
                   missions={grouped.social}
+                  earnedXp={categoryXp.social}
                   emptyLabel="No social mission right now."
                   onClaim={handleClaim}
                   pendingMissionId={pendingMissionId}
